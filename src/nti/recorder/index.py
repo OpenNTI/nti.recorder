@@ -43,6 +43,9 @@ from nti.zope_catalog.interfaces import IMetadataCatalog
 from nti.zope_catalog.string import StringTokenNormalizer
 
 CATALOG_NAME = 'nti.dataserver.++etc++recorder-catalog'
+RECORDABLE_CATALOG_NAME = CATALOG_NAME
+
+TRX_RECORD_CATALOG_NAME = 'nti.dataserver.++etc++trxrecord-catalog'
 
 #: Transaction ID index
 IX_TID = 'tid'
@@ -52,6 +55,9 @@ IX_TYPE = 'type'
 
 #: Recordable object locked attribute index
 IX_LOCKED = 'locked'
+
+#: Recordable ID
+IX_RECORDABLE = 'recordable'
 
 #: Recordable container object child-order-locked attribute index
 IX_CHILD_ORDER_LOCKED = 'childOrderLocked'
@@ -74,6 +80,14 @@ class SiteIndex(RawSetIndex):
     pass
 
 
+deprecated('TargetIntIDIndex', 'No longer used')
+class TargetIntIDIndex(IntegerAttributeIndex):
+    pass
+
+
+# transactions
+
+
 class ValidatingRecordableIntID(object):
 
     __slots__ = (b'intid',)
@@ -89,34 +103,9 @@ class ValidatingRecordableIntID(object):
         raise TypeError()
 
 
-deprecated('TargetIntIDIndex', 'No longer used')
-class TargetIntIDIndex(IntegerAttributeIndex):
-    pass
-
-
-class ValidatingMimeType(object):
-
-    __slots__ = (b'mimeType',)
-
-    def __init__(self, obj, default=None):
-        if ITransactionRecord.providedBy(obj):
-            source = find_interface(obj, IRecordable, strict=False)
-        elif IRecordable.providedBy(obj):
-            source = obj
-        else:
-            source = None
-        if source is not None:
-            source = IContentTypeAware(source, source)
-            self.mimeType = getattr(source, 'mimeType', None) \
-                         or getattr(source, 'mime_type', None)
-
-    def __reduce__(self):
-        raise TypeError()
-
-
-class MimeTypeIndex(AttributeValueIndex):
-    default_field_name = 'mimeType'
-    default_interface = ValidatingMimeType
+class RecordableIDIndex(IntegerAttributeIndex):
+    default_field_name = 'intid'
+    default_interface = ValidatingRecordableIntID
 
 
 class PrincipalRawIndex(RawValueIndex):
@@ -140,6 +129,11 @@ class TypeIndex(AttributeValueIndex):
     default_interface = ITransactionRecord
 
 
+class AttributeSetIndex(AttributeSetIndex):
+    default_field_name = 'attributes'
+    default_interface = ITransactionRecord
+
+
 class CreatedTimeRawIndex(RawIntegerValueIndex):
     pass
 
@@ -151,9 +145,32 @@ def CreatedTimeIndex(family=None):
                                 normalizer=TimestampToNormalized64BitIntNormalizer())
 
 
-class AttributeSetIndex(AttributeSetIndex):
-    default_field_name = 'attributes'
-    default_interface = ITransactionRecord
+# recordables
+
+
+class ValidatingMimeType(object):
+
+    __slots__ = (b'mimeType',)
+
+    def __init__(self, obj, default=None):
+        if ITransactionRecord.providedBy(obj):
+            source = find_interface(obj, IRecordable, strict=False)
+        elif IRecordable.providedBy(obj):
+            source = obj
+        else:
+            source = None
+        if source is not None:
+            source = IContentTypeAware(source, source)
+            self.mimeType = getattr(source, 'mimeType', None) \
+                or getattr(source, 'mime_type', None)
+
+    def __reduce__(self):
+        raise TypeError()
+
+
+class MimeTypeIndex(AttributeValueIndex):
+    default_field_name = 'mimeType'
+    default_interface = ValidatingMimeType
 
 
 class ValidatingLocked(object):
@@ -231,24 +248,78 @@ def create_recorder_catalog(catalog=None, family=None):
     return catalog
 
 
-def get_catalog(registry=component):
+def get_recorder_catalog(registry=component):
     catalog = registry.queryUtility(IMetadataCatalog, name=CATALOG_NAME)
     return catalog
+get_catalog = get_recorder_catalog
 
 
 def install_recorder_catalog(site_manager_container, intids=None):
     lsm = site_manager_container.getSiteManager()
     intids = lsm.getUtility(IIntIds) if intids is None else intids
-    catalog = get_catalog(registry=lsm)
+    catalog = get_recorder_catalog(registry=lsm)
     if catalog is not None:
         return catalog
 
     catalog = MetadataRecorderCatalog(family=intids.family)
     locate(catalog, site_manager_container, CATALOG_NAME)
     intids.register(catalog)
-    lsm.registerUtility(catalog, 
-                        provided=IMetadataCatalog, 
+    lsm.registerUtility(catalog,
+                        provided=IMetadataCatalog,
                         name=CATALOG_NAME)
+
+    catalog = create_recorder_catalog(catalog=catalog, family=intids.family)
+    for index in catalog.values():
+        intids.register(index)
+    return catalog
+
+
+@interface.implementer(IMetadataCatalog)
+class MetadataTransactionCatalog(Catalog):
+
+    super_index_doc = Catalog.index_doc
+
+    def index_doc(self, docid, ob):
+        pass
+
+    def force_index_doc(self, docid, ob):
+        self.super_index_doc(docid, ob)
+
+
+def get_transaction_catalog(registry=component):
+    catalog = registry.queryUtility(IMetadataCatalog,
+                                    name=TRX_RECORD_CATALOG_NAME)
+    return catalog
+
+
+def create_transaction_catalog(catalog=None, family=None):
+    if catalog is None:
+        catalog = MetadataRecorderCatalog(family=family)
+    for name, clazz in ((IX_TID, TIDIndex),
+                        (IX_TYPE, TypeIndex),
+                        (IX_PRINCIPAL, PrincipalIndex),
+                        (IX_ATTRIBUTES, AttributeSetIndex),
+                        (IX_CREATEDTIME, CreatedTimeIndex),
+                        (IX_RECORDABLE, RecordableIDIndex)):
+        index = clazz(family=family)
+        locate(index, catalog, name)
+        catalog[name] = index
+    return catalog
+
+
+def install_transaction_catalog(site_manager_container, intids=None):
+    lsm = site_manager_container.getSiteManager()
+    intids = lsm.getUtility(IIntIds) if intids is None else intids
+    catalog = get_transaction_catalog(registry=lsm)
+    if catalog is not None:
+        return catalog
+
+    catalog = MetadataTransactionCatalog(family=intids.family)
+    locate(catalog, site_manager_container, TRX_RECORD_CATALOG_NAME)
+    intids.register(catalog)
+    lsm.registerUtility(catalog,
+                        provided=IMetadataCatalog,
+                        name=TRX_RECORD_CATALOG_NAME)
 
     catalog = create_recorder_catalog(catalog=catalog, family=intids.family)
     for index in catalog.values():
