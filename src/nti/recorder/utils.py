@@ -34,6 +34,7 @@ from nti.externalization.externalization import isSyntheticKey
 
 from nti.recorder.interfaces import TRX_TYPE_CREATE
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
+
 from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecordHistory
 

@@ -23,7 +23,7 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent.persistence import Persistent
 
-from nti.coremetadata.interfaces import IRecordable
+from nti.recorder.mixins import RecordableMixin
 
 from nti.recorder.record import get_transactions
 
@@ -34,8 +34,8 @@ from nti.recorder.utils import record_transaction
 from nti.recorder.tests import SharedConfiguringTestLayer
 
 
-@interface.implementer(IRecordable, IAttributeAnnotatable)
-class Recordable(Persistent):
+@interface.implementer(IAttributeAnnotatable)
+class Recordable(Persistent, RecordableMixin):
     locked = False
 
     def lock(self):

@@ -17,10 +17,9 @@ from zope.security.management import queryInteraction
 
 from ZODB.interfaces import IConnection
 
-from nti.coremetadata.interfaces import IRecordable
-
 from nti.externalization.interfaces import IObjectModifiedFromExternalEvent
 
+from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 from nti.recorder.record import remove_transaction_history

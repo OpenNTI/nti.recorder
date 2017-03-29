@@ -26,12 +26,12 @@ from persistent.persistence import Persistent
 
 from nti.base._compat import unicode_
 
-from nti.coremetadata.interfaces import IRecordable
-
 from nti.recorder import TRX_RECORD_HISTORY_KEY
 
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
 from nti.recorder.interfaces import ITransactionRecordHistory
+
+from nti.recorder.mixins import RecordableMixin
 
 from nti.recorder.record import copy_records
 from nti.recorder.record import remove_history
@@ -42,8 +42,8 @@ from nti.recorder.record import TransactionRecord
 from nti.recorder.tests import SharedConfiguringTestLayer
 
 
-@interface.implementer(IRecordable, IAttributeAnnotatable)
-class Foo(Persistent):
+@interface.implementer(IAttributeAnnotatable)
+class Foo(Persistent, RecordableMixin):
     pass
 
 

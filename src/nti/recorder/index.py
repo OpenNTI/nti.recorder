@@ -20,10 +20,9 @@ from zope.location import locate
 
 from zope.mimetype.interfaces import IContentTypeAware
 
-from nti.coremetadata.interfaces import IRecordable
-from nti.coremetadata.interfaces import IRecordableContainer
-
+from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecord
+from nti.recorder.interfaces import IRecordableContainer
 
 from nti.traversal.traversal import find_interface
 

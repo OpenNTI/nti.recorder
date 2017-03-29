@@ -24,10 +24,9 @@ from zope.location.location import locate
 
 from ZODB.interfaces import IConnection
 
-from nti.coremetadata.interfaces import IRecordable
-
 from nti.recorder import TRX_RECORD_HISTORY_KEY
 
+from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecord
 from nti.recorder.interfaces import ITransactionRecordHistory
 

@@ -16,10 +16,10 @@ does_not = is_not
 import BTrees
 import unittest
 
-from nti.coremetadata.mixins import RecordableMixin
-
 from nti.recorder.index import get_recordables
 from nti.recorder.index import create_recorder_catalog
+
+from nti.recorder.mixins import RecordableMixin
 
 from nti.recorder.tests import SharedConfiguringTestLayer
 
