@@ -63,6 +63,7 @@ setup(
         'zope.component',
         'zope.container',
         'zope.deprecation',
+        'zope.event',
         'zope.interface',
         'zope.intid',
         'zope.lifecycleevent',

@@ -11,11 +11,15 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
+from zope.interface.interfaces import ObjectEvent
+from zope.interface.interfaces import IObjectEvent
+
 from zope.location.interfaces import IContained
 
 from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
 
+from nti.schema.field import Bool
 from nti.schema.field import Object
 from nti.schema.field import TextLine
 from nti.schema.field import IndexedIterable
@@ -30,6 +34,65 @@ TRX_TYPE_UPDATE = 'update'
 
 #: Imported Transaction type
 TRX_TYPE_IMPORT = 'import'
+
+
+class IRecordable(interface.Interface):
+    """
+    A marker interface for objects whose changes are to be recorded
+    """
+    locked = Bool("If this object is locked.", default=False, required=False)
+    locked.setTaggedValue('_ext_excluded_out', True)
+
+    def lock(event=True):
+        """
+        lock this object
+
+        :param event: Notify lock event
+        """
+
+    def unlock(event=True):
+        """
+        unlock this object
+
+        :param event: Notify unlock event
+        """
+
+    def isLocked():
+        """
+        return if this object is locked
+        """
+    is_locked = isLocked
+
+
+class IRecordableContainer(IRecordable):
+    """
+    A marker interface for `IRecordable` container objects.
+    """
+    child_order_locked = Bool(title="If this children order/set of this container are locked.",
+                              default=False, required=False)
+    child_order_locked.setTaggedValue('_ext_excluded_out', True)
+
+    def child_order_lock(event=True):
+        """
+        child order lock this object
+
+        :param event: Notify lock event
+        """
+    childOrderLock = child_order_lock
+
+    def child_order_unlock(event=True):
+        """
+        child order unlock this object
+
+        :param event: Notify unlock event
+        """
+    childOrderUnlock = child_order_unlock
+
+    def is_child_order_locked():
+        """
+        return if this object is child order locked
+        """
+    isChildOrderLocked = is_child_order_locked
 
 
 class ITransactionRecord(IContained, ICreated, ILastModified):
@@ -79,3 +142,46 @@ class ITransactionRecordHistory(IContained):
         Query the transaction history for record(s) matching
         the given filters.
         """
+
+class IObjectLockedEvent(IObjectEvent):
+    """
+    An event that is sent, when an object has been locked
+    """
+
+
+class IObjectUnlockedEvent(IObjectEvent):
+    """
+    An event that is sent, when an object has been unlocked
+    """
+
+
+@interface.implementer(IObjectLockedEvent)
+class ObjectLockedEvent(ObjectEvent):
+    pass
+
+
+@interface.implementer(IObjectUnlockedEvent)
+class ObjectUnlockedEvent(ObjectEvent):
+    pass
+
+
+class IObjectChildOrderLockedEvent(IObjectEvent):
+    """
+    An event that is sent, when an object has been child-order-locked
+    """
+
+
+class IObjectChildOrderUnlockedEvent(IObjectEvent):
+    """
+    An event that is sent, when an object has been child-order-unlocked
+    """
+
+
+@interface.implementer(IObjectChildOrderLockedEvent)
+class ObjectChildOrderLockedEvent(ObjectEvent):
+    pass
+
+
+@interface.implementer(IObjectChildOrderUnlockedEvent)
+class ObjectChildOrderUnlockedEvent(ObjectEvent):
+    pass

@@ -15,6 +15,12 @@ from io import BytesIO
 
 from zope import lifecycleevent
 
+from zope.security.interfaces import NoInteraction
+
+from zope.security.management import getInteraction
+
+from zope.security.management import system_user
+
 import transaction
 try:
     from transaction._compat import get_thread_ident
@@ -24,21 +30,25 @@ except ImportError:
 
 from nti.base._compat import unicode_
 
-from nti.coremetadata.interfaces import IRecordable
-
-from nti.coremetadata.utils import current_principal
-
 from nti.externalization.externalization import isSyntheticKey
 
 from nti.recorder.interfaces import TRX_TYPE_CREATE
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
+from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 from nti.recorder.record import TransactionRecord
 
 from ZODB.utils import serial_repr
 
-principal = current_principal  # BWC
+
+def current_principal(system=True):
+    try:
+        result = getInteraction().participations[0].principal
+    except (NoInteraction, IndexError, AttributeError):
+        result = system_user if system else None
+    return result
+principal = currentPrincipal = current_principal #BWC
 
 
 def compress(obj):
@@ -75,8 +85,8 @@ def txn_id():
 
 
 def _get_attributes(descriptions):
-    if      descriptions is not None \
-        and not isinstance(descriptions, (tuple, list, set)):
+    if descriptions is not None \
+            and not isinstance(descriptions, (tuple, list, set)):
         descriptions = (descriptions,)
 
     result = set()
@@ -84,9 +94,9 @@ def _get_attributes(descriptions):
     def _accum(vals):
         # Exclude synthetic keys, including mimetype.
         for val in vals:
-            if      val \
-                and not isSyntheticKey(val) \
-                and val.lower() != 'mimetype':
+            if val \
+                    and not isSyntheticKey(val) \
+                    and val.lower() != 'mimetype':
                 result.add(val)
 
     for a in descriptions or ():
@@ -121,7 +131,7 @@ def record_transaction(recordable, principal=None, descriptions=(),
                 or principal)
 
     if username is None:
-        return # tests
+        return  # tests
 
     # create record
     ext_value = compress(ext_value) if ext_value is not None else None
@@ -133,7 +143,6 @@ def record_transaction(recordable, principal=None, descriptions=(),
 
     lifecycleevent.created(record)
     history.add(record)
-
     if lock:
         if IRecordable.providedBy(recordable):
             recordable.lock()
