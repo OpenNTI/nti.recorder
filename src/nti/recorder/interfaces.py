@@ -143,6 +143,7 @@ class ITransactionRecordHistory(IContained):
         the given filters.
         """
 
+
 class IObjectLockedEvent(IObjectEvent):
     """
     An event that is sent, when an object has been locked
