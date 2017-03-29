@@ -11,7 +11,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope import interface
 
-from zope.container.interfaces import IContained
+from zope.location.interfaces import IContained
 
 from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
