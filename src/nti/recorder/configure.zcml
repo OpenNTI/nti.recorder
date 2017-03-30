@@ -13,7 +13,7 @@
 	<!-- Adapters -->
 	<adapter factory=".adapters.TransactionRecordHistoryFactory"
 			 provides=".interfaces.ITransactionRecordHistory"
-			 for="nti.coremetadata.interfaces.IRecordable" />
+			 for=".interfaces.IRecordable" />
 
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
