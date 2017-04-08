@@ -16,6 +16,7 @@ from hamcrest import assert_that
 from hamcrest import has_property
 does_not = is_not
 
+from nti.testing.matchers import validly_provides
 from nti.testing.matchers import verifiably_provides
 
 import unittest
@@ -41,6 +42,9 @@ class TestRecord(unittest.TestCase):
         record = TransactionRecord(tid='a',
                                    principal='ichigo',
                                    attributes=('foo',))
+        assert_that(record,
+                    validly_provides(ITransactionRecord))
+        
         ext = to_external_object(record)
         assert_that(ext, has_entry('Class', is_('TransactionRecord')))
         assert_that(ext, has_entry('principal', is_('ichigo')))
