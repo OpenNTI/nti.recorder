@@ -153,16 +153,10 @@ class ValidatingMimeType(object):
     __slots__ = (b'mimeType',)
 
     def __init__(self, obj, default=None):
-        if ITransactionRecord.providedBy(obj):
-            source = find_interface(obj, IRecordable, strict=False)
-        elif IRecordable.providedBy(obj):
-            source = obj
-        else:
-            source = None
-        if source is not None:
-            source = IContentTypeAware(source, source)
+        if IRecordable.providedBy(obj):
+            source = IContentTypeAware(obj, obj)
             self.mimeType = getattr(source, 'mimeType', None) \
-                or getattr(source, 'mime_type', None)
+                         or getattr(source, 'mime_type', None)
 
     def __reduce__(self):
         raise TypeError()
@@ -178,14 +172,8 @@ class ValidatingLocked(object):
     __slots__ = (b'locked',)
 
     def __init__(self, obj, default=None):
-        if ITransactionRecord.providedBy(obj):
-            source = find_interface(obj, IRecordable, strict=False)
-        elif IRecordable.providedBy(obj):
-            source = obj
-        else:
-            source = None
-        if source is not None:
-            self.locked = source.isLocked()
+        if IRecordable.providedBy(obj):
+            self.locked = obj.isLocked()
 
     def __reduce__(self):
         raise TypeError()
@@ -201,14 +189,8 @@ class ValidatingChildOrderLocked(object):
     __slots__ = (b'child_order_locked',)
 
     def __init__(self, obj, default=None):
-        if ITransactionRecord.providedBy(obj):
-            source = find_interface(obj, IRecordableContainer, strict=False)
-        elif IRecordableContainer.providedBy(obj):
-            source = obj
-        else:
-            source = None
-        if source is not None:
-            self.child_order_locked = source.isChildOrderLocked()
+        if IRecordableContainer.providedBy(obj):
+            self.child_order_locked = obj.isChildOrderLocked()
 
     def __reduce__(self):
         raise TypeError()
