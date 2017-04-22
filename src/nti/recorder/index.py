@@ -24,6 +24,8 @@ from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecord
 from nti.recorder.interfaces import IRecordableContainer
 
+from nti.traversal.location import find_interface
+
 from nti.zope_catalog.catalog import Catalog
 
 from nti.zope_catalog.datetime import TimestampToNormalized64BitIntNormalizer
@@ -37,8 +39,6 @@ from nti.zope_catalog.index import ValueIndex as RawValueIndex
 from nti.zope_catalog.index import IntegerValueIndex as RawIntegerValueIndex
 
 from nti.zope_catalog.interfaces import IMetadataCatalog
-
-from nti.zope_catalog.location import find_interface
 
 from nti.zope_catalog.string import StringTokenNormalizer
 

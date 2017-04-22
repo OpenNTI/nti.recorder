@@ -54,6 +54,7 @@ setup(
         'nti.dublincore',
         'nti.externalization',
         'nti.property',
+        'nti.traversal',
         'nti.schema',
         'nti.zope_catalog',
         'persistent',
