@@ -27,20 +27,20 @@ from nti.schema.field import IndexedIterable
 TRX_RECORD_HISTORY_KEY = 'nti.recorder.record.TransactionRecordHistory'
 
 #: Created Transaction type
-TRX_TYPE_CREATE = 'create'
+TRX_TYPE_CREATE = u'create'
 
 #: Updated Transaction type
-TRX_TYPE_UPDATE = 'update'
+TRX_TYPE_UPDATE = u'update'
 
 #: Imported Transaction type
-TRX_TYPE_IMPORT = 'import'
+TRX_TYPE_IMPORT = u'import'
 
 
 class IRecordable(interface.Interface):
     """
     A marker interface for objects whose changes are to be recorded
     """
-    locked = Bool("If this object is locked.", default=False, required=False)
+    locked = Bool(u"If this object is locked.", default=False, required=False)
     locked.setTaggedValue('_ext_excluded_out', True)
 
     def lock(event=True):
@@ -68,7 +68,7 @@ class IRecordableContainer(IRecordable):
     """
     A marker interface for `IRecordable` container objects.
     """
-    child_order_locked = Bool(title="If this children order/set of this container are locked.",
+    child_order_locked = Bool(title=u"If this children order/set of this container are locked.",
                               default=False, required=False)
     child_order_locked.setTaggedValue('_ext_excluded_out', True)
 
@@ -96,22 +96,21 @@ class IRecordableContainer(IRecordable):
 
 
 class ITransactionRecord(IContained, ICreated, ILastModified):
-    tid = TextLine(title="The transaction/serial id", required=False)
+    tid = TextLine(title=u"The transaction/serial id", required=False)
 
-    type = TextLine(title="The transaction type",
+    type = TextLine(title=u"The transaction type",
                     required=False,
                     default=TRX_TYPE_UPDATE)
 
-    principal = TextLine(title="The principal id", required=True)
+    principal = TextLine(title=u"The principal id", required=True)
 
-    attributes = IndexedIterable(title="The modifed attributes",
-                                 value_type=TextLine(
-                                     title="The attribute name"),
+    attributes = IndexedIterable(title=u"The modifed attributes",
+                                 value_type=TextLine(title=u"The attribute name"),
                                  min_length=0,
                                  unique=True)
 
     external_value = Object(interface.Interface,
-                            title="External value",
+                            title=u"External value",
                             required=False)
     external_value.setTaggedValue('_ext_excluded_out', True)
 
