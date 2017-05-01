@@ -40,7 +40,8 @@ class IRecordable(interface.Interface):
     """
     A marker interface for objects whose changes are to be recorded
     """
-    locked = Bool(u"If this object is locked.", default=False, required=False)
+    locked = Bool(title=u"If this object is locked.", 
+                  default=False, required=False)
     locked.setTaggedValue('_ext_excluded_out', True)
 
     def lock(event=True):
