@@ -42,10 +42,10 @@ class TestAdapters(unittest.TestCase):
         assert_that(1, is_in(uids))
 
     def test_get_trasanction(self):
-        record = TransactionRecord(principal='ichigo', type='create',
-                                   tid='tx123', 
-                                   attributes=('bankai',),
-                                   external_value={'name':'tensa'})
+        record = TransactionRecord(principal=u'ichigo', type=u'create',
+                                   tid=u'tx123', 
+                                   attributes=(u'bankai',),
+                                   external_value={u'name':u'tensa'})
         record.lastModified = record.createdTime = 100000
         catalog = create_transaction_catalog(family=BTrees.family64)
         catalog.super_index_doc(1, record)

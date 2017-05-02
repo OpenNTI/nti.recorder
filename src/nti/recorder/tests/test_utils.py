@@ -50,9 +50,9 @@ class TestSubscriber(unittest.TestCase):
         recordable = Recordable()
         assert_that(recordable, has_property('locked', is_(False)))
 
-        record = record_transaction(recordable, principal="ichigo",
-                                    descriptions=('a',), 
-                                    ext_value={"a": "b"})
+        record = record_transaction(recordable, principal=u"ichigo",
+                                    descriptions=(u'a',), 
+                                    ext_value={u"a": u"b"})
 
         assert_that(record, is_not(none()))
         assert_that(record, has_property('attributes', is_(('a',))))
@@ -61,7 +61,7 @@ class TestSubscriber(unittest.TestCase):
         assert_that(record, has_property('external_value', is_not(none())))
 
         ext_value = decompress(record.external_value)
-        assert_that(ext_value, is_({"a": "b"}))
+        assert_that(ext_value, is_({u"a": u"b"}))
 
         # we are locked
         assert_that(recordable, has_property('locked', is_(True)))
@@ -71,15 +71,16 @@ class TestSubscriber(unittest.TestCase):
         assert_that(records, has_length(1))
 
         # No useful attributes in an update means we will not record tx.
-        record = record_transaction(recordable, principal='aizen',
-                                    descriptions=('MimeType',))
+        record = record_transaction(recordable, principal=u'aizen',
+                                    descriptions=(u'MimeType',))
         assert_that(record, none())
 
         records = get_transactions(recordable)
         assert_that(records, has_length(1))
 
-        record = record_transaction(recordable, principal='aizen', type_='xyz',
-                                    descriptions=('test_attribute',))
+        record = record_transaction(recordable, principal=u'aizen', 
+                                    type_=u'xyz',
+                                    descriptions=(u'test_attribute',))
         assert_that(record, is_not(none()))
         assert_that(record, has_property('type', is_('xyz')))
         assert_that(record, has_property('tid', is_(txn_id())))

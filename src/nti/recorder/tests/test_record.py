@@ -39,9 +39,9 @@ class TestRecord(unittest.TestCase):
     def test_record(self):
         assert_that(TransactionRecord(),
                     verifiably_provides(ITransactionRecord))
-        record = TransactionRecord(tid='a',
-                                   principal='ichigo',
-                                   attributes=('foo',))
+        record = TransactionRecord(tid=u'a',
+                                   principal=u'ichigo',
+                                   attributes=(u'foo',))
         assert_that(record,
                     validly_provides(ITransactionRecord))
         

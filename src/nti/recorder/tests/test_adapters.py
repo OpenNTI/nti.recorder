@@ -58,9 +58,9 @@ class TestAdapters(unittest.TestCase):
         assert_that(history, has_length(0))
         assert_that(history, has_property('__parent__', is_(f)))
         assert_that(bool(history), is_(False))
-        record = TransactionRecord(tid='a',
-                                   principal='ichigo',
-                                   attributes=('foo',))
+        record = TransactionRecord(tid=u'a',
+                                   principal=u'ichigo',
+                                   attributes=(u'foo',))
         history.add(record)
         assert_that(history, has_length(1))
         assert_that(list(history.records()), is_([record]))
@@ -74,9 +74,9 @@ class TestAdapters(unittest.TestCase):
         f = Foo()
         assert_that(has_transactions(f), is_(False))
         history = ITransactionRecordHistory(f)
-        record = TransactionRecord(tid='a',
-                                   principal='ichigo',
-                                   attributes=('foo',))
+        record = TransactionRecord(tid=u'a',
+                                   principal=u'ichigo',
+                                   attributes=(u'foo',))
         history.add(record)
 
         records = list(history.records())
@@ -100,10 +100,10 @@ class TestAdapters(unittest.TestCase):
         history = ITransactionRecordHistory(f, None)
         for x in xrange(5):
             current = (x+1) * 5
-            principal = 'ichigo' if x % 2 == 0 else 'aizen'
+            principal = u'ichigo' if x % 2 == 0 else u'aizen'
             record = TransactionRecord(tid=unicode_(str(x)),
                                        principal=principal,
-                                       attributes=('bankai',))
+                                       attributes=(u'bankai',))
             record.createdTime = record.lastModified = current
             history.add(record)
 
