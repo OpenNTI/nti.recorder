@@ -26,9 +26,9 @@ from persistent.persistence import Persistent
 
 from nti.base._compat import unicode_
 
-from nti.recorder import TRX_RECORD_HISTORY_KEY
-
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
+from nti.recorder.interfaces import TRX_RECORD_HISTORY_KEY
+
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 from nti.recorder.mixins import RecordableMixin
