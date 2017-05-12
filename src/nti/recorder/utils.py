@@ -95,9 +95,9 @@ def _get_attributes(descriptions):
     def _accum(vals):
         # Exclude synthetic keys, including mimetype.
         for val in vals:
-            if val \
-                    and not isSyntheticKey(val) \
-                    and val.lower() != 'mimetype':
+            if      val \
+                and not isSyntheticKey(val) \
+                and val.lower() != 'mimetype':
                 result.add(val)
 
     for a in descriptions or ():
