@@ -20,6 +20,8 @@ from zope.annotation import factory as an_factory
 
 from zope.container.btree import BTreeContainer
 
+from zope.location.interfaces import ISublocations
+
 from zope.location.location import locate
 
 from ZODB.interfaces import IConnection
@@ -32,7 +34,7 @@ from nti.recorder.interfaces import ITransactionRecordHistory
 
 
 @component.adapter(IRecordable)
-@interface.implementer(ITransactionRecordHistory)
+@interface.implementer(ITransactionRecordHistory, ISublocations)
 class TransactionRecordContainer(BTreeContainer):
 
     @property
@@ -85,6 +87,10 @@ class TransactionRecordContainer(BTreeContainer):
                 self._delitemf(key)
         return len(keys)
     reset = clear
+
+    def sublocations(self):
+        for v in self._SampleContainer__data.values():
+            yield v
 
     def query(self, tid=None, principal=None, record_type=None, 
               start_time=None, end_time=None):
