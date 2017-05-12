@@ -86,8 +86,8 @@ def txn_id():
 
 
 def _get_attributes(descriptions):
-    if descriptions is not None \
-            and not isinstance(descriptions, (tuple, list, set)):
+    if      descriptions is not None \
+        and not isinstance(descriptions, (tuple, list, set)):
         descriptions = (descriptions,)
 
     result = set()
