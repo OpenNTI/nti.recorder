@@ -28,7 +28,7 @@ except ImportError:
     def get_thread_ident():
         return id(transaction.get())
 
-from nti.base._compat import unicode_
+from nti.base._compat import text_
 
 from nti.externalization.externalization import isSyntheticKey
 
@@ -82,7 +82,7 @@ def is_created(obj):
 
 
 def txn_id():
-    return unicode_("txn.%s" % get_thread_ident())
+    return u"txn.%s" % get_thread_ident()
 
 
 def _get_attributes(descriptions):
@@ -123,7 +123,7 @@ def record_transaction(recordable, principal=None, descriptions=(),
         history = ITransactionRecordHistory(recordable)
 
     tid = getattr(recordable, '_p_serial', None)
-    tid = unicode_(serial_repr(tid)) if tid else txn_id()
+    tid = text_(serial_repr(tid)) if tid else txn_id()
     tid = txn_id() if tid == u'0x00' else tid  # new object
 
     principal = current_principal(False) if principal is None else principal
