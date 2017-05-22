@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -42,7 +42,8 @@ class TestAdapters(unittest.TestCase):
         assert_that(1, is_in(uids))
 
     def test_get_trasanction(self):
-        record = TransactionRecord(principal=u'ichigo', type=u'create',
+        record = TransactionRecord(principal=u'ichigo',
+                                   type=u'create',
                                    tid=u'tx123', 
                                    attributes=(u'bankai',),
                                    external_value={u'name':u'tensa'})

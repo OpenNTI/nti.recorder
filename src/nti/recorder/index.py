@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -90,7 +90,7 @@ class TargetIntIDIndex(IntegerAttributeIndex):
 
 class ValidatingRecordableIntID(object):
 
-    __slots__ = (b'intid',)
+    __slots__ = ('intid',)
 
     def __init__(self, obj, default=None):
         if ITransactionRecord.providedBy(obj):
@@ -150,7 +150,7 @@ def CreatedTimeIndex(family=None):
 
 class ValidatingMimeType(object):
 
-    __slots__ = (b'mimeType',)
+    __slots__ = ('mimeType',)
 
     def __init__(self, obj, default=None):
         if IRecordable.providedBy(obj):
@@ -169,7 +169,7 @@ class MimeTypeIndex(AttributeValueIndex):
 
 class ValidatingLocked(object):
 
-    __slots__ = (b'locked',)
+    __slots__ = ('locked',)
 
     def __init__(self, obj, default=None):
         if IRecordable.providedBy(obj):
@@ -186,7 +186,7 @@ class LockedIndex(AttributeValueIndex):
 
 class ValidatingChildOrderLocked(object):
 
-    __slots__ = (b'child_order_locked',)
+    __slots__ = ('child_order_locked',)
 
     def __init__(self, obj, default=None):
         if IRecordableContainer.providedBy(obj):

@@ -4,7 +4,7 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -20,6 +20,8 @@ from zope.security.interfaces import NoInteraction
 from zope.security.management import getInteraction
 
 from zope.security.management import system_user
+
+from ZODB.utils import serial_repr
 
 import transaction
 try:
@@ -39,8 +41,6 @@ from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 from nti.recorder.record import TransactionRecord
-
-from ZODB.utils import serial_repr
 
 
 def current_principal(system=True):

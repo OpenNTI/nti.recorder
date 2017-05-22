@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 # disable: accessing protected members, too many methods
@@ -24,7 +24,7 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent.persistence import Persistent
 
-from nti.base._compat import unicode_
+from nti.base._compat import text_
 
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
 from nti.recorder.interfaces import TRX_RECORD_HISTORY_KEY
@@ -101,7 +101,7 @@ class TestAdapters(unittest.TestCase):
         for x in xrange(5):
             current = (x+1) * 5
             principal = u'ichigo' if x % 2 == 0 else u'aizen'
-            record = TransactionRecord(tid=unicode_(str(x)),
+            record = TransactionRecord(tid=text_(str(x)),
                                        principal=principal,
                                        attributes=(u'bankai',))
             record.createdTime = record.lastModified = current
