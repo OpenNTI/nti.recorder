@@ -271,7 +271,7 @@ def get_transaction_catalog(registry=component):
 
 def create_transaction_catalog(catalog=None, family=BTrees.family64):
     if catalog is None:
-        catalog = MetadataRecorderCatalog(family=family)
+        catalog = MetadataTransactionCatalog(family=family)
     for name, clazz in ((IX_TID, TIDIndex),
                         (IX_TYPE, TypeIndex),
                         (IX_PRINCIPAL, PrincipalIndex),
