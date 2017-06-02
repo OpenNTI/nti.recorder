@@ -20,6 +20,8 @@ from zope.location import locate
 
 from zope.mimetype.interfaces import IContentTypeAware
 
+import BTrees
+
 from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecord
 from nti.recorder.interfaces import IRecordableContainer
@@ -213,7 +215,7 @@ class MetadataRecorderCatalog(Catalog):
         self.super_index_doc(docid, ob)
 
 
-def create_recorder_catalog(catalog=None, family=None):
+def create_recorder_catalog(catalog=None, family=BTrees.family64):
     if catalog is None:
         catalog = MetadataRecorderCatalog(family=family)
     for name, clazz in ((IX_LOCKED, LockedIndex),
@@ -226,8 +228,7 @@ def create_recorder_catalog(catalog=None, family=None):
 
 
 def get_recorder_catalog(registry=component):
-    catalog = registry.queryUtility(IMetadataCatalog, name=CATALOG_NAME)
-    return catalog
+    return registry.queryUtility(IMetadataCatalog, name=CATALOG_NAME)
 get_catalog = get_recorder_catalog
 
 
@@ -238,14 +239,13 @@ def install_recorder_catalog(site_manager_container, intids=None):
     if catalog is not None:
         return catalog
 
-    catalog = MetadataRecorderCatalog(family=intids.family)
+    catalog = create_recorder_catalog(family=intids.family)
     locate(catalog, site_manager_container, CATALOG_NAME)
     intids.register(catalog)
     lsm.registerUtility(catalog,
                         provided=IMetadataCatalog,
                         name=CATALOG_NAME)
 
-    catalog = create_recorder_catalog(catalog=catalog, family=intids.family)
     for index in catalog.values():
         intids.register(index)
     return catalog
@@ -269,7 +269,7 @@ def get_transaction_catalog(registry=component):
     return catalog
 
 
-def create_transaction_catalog(catalog=None, family=None):
+def create_transaction_catalog(catalog=None, family=BTrees.family64):
     if catalog is None:
         catalog = MetadataRecorderCatalog(family=family)
     for name, clazz in ((IX_TID, TIDIndex),
@@ -291,14 +291,13 @@ def install_transaction_catalog(site_manager_container, intids=None):
     if catalog is not None:
         return catalog
 
-    catalog = MetadataTransactionCatalog(family=intids.family)
+    catalog = create_transaction_catalog(family=intids.family)
     locate(catalog, site_manager_container, TRX_RECORD_CATALOG_NAME)
     intids.register(catalog)
     lsm.registerUtility(catalog,
                         provided=IMetadataCatalog,
                         name=TRX_RECORD_CATALOG_NAME)
 
-    catalog = create_transaction_catalog(catalog=catalog, family=intids.family)
     for index in catalog.values():
         intids.register(index)
     return catalog
