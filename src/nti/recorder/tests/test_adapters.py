@@ -98,7 +98,7 @@ class TestAdapters(unittest.TestCase):
     def test_query(self):
         f = Foo()
         history = ITransactionRecordHistory(f, None)
-        for x in xrange(5):
+        for x in range(5):
             current = (x+1) * 5
             principal = u'ichigo' if x % 2 == 0 else u'aizen'
             record = TransactionRecord(tid=text_(str(x)),
