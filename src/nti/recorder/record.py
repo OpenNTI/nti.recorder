@@ -88,14 +88,14 @@ class TransactionRecordHistory(Persistent, Contained):
 
 
 def has_transactions(obj):
-    history = ITransactionRecordHistory(obj)
+    history = ITransactionRecordHistory(obj, None)
     return bool(history)
 hasTransactions = has_transactions
 
 
 def get_transactions(obj, sort=False, descending=True):
     result = []
-    history = ITransactionRecordHistory(obj)
+    history = ITransactionRecordHistory(obj, None)
     if history:
         result.extend(history.records())
     if sort:
@@ -105,7 +105,7 @@ getTransactions = get_transactions
 
 
 def remove_transaction_history(obj):
-    history = ITransactionRecordHistory(obj)
+    history = ITransactionRecordHistory(obj, None)
     if history:
         return history.clear()
     return 0
@@ -122,7 +122,7 @@ appendTransactions = append_transactions = append_records
 
 
 def copy_transaction_history(source, target, clear=True):
-    source_history = ITransactionRecordHistory(source)
+    source_history = ITransactionRecordHistory(source, None)
     if not source_history:
         return 0
     records = list(source_history.records())
