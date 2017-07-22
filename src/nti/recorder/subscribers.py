@@ -40,5 +40,5 @@ def _record_modification(obj, event):
 
 
 @component.adapter(IRecordable, IObjectRemovedEvent)
-def _recordable_removed(obj, event):
+def _recordable_removed(obj, _):
     remove_transaction_history(obj)
