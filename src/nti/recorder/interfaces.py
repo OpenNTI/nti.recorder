@@ -202,6 +202,6 @@ class IRecordables(interface.Interface):
 
 def get_recordables():
     predicates = component.getUtilitiesFor(IRecordables)
-    for predicate in list(predicates):
+    for _, predicate in list(predicates):
         for obj in predicate.iter_objects():
             yield obj
