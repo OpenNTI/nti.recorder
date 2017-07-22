@@ -94,7 +94,7 @@ class ValidatingRecordableIntID(object):
 
     __slots__ = ('intid',)
 
-    def __init__(self, obj, default=None):
+    def __init__(self, obj, unused_default):
         if ITransactionRecord.providedBy(obj):
             source = find_interface(obj, IRecordable)
             intids = component.queryUtility(IIntIds)  # test mode
@@ -114,7 +114,7 @@ class PrincipalRawIndex(RawValueIndex):
     pass
 
 
-def PrincipalIndex(family=None):
+def PrincipalIndex(family=BTrees.family64):
     return NormalizationWrapper(field_name='principal',
                                 interface=ITransactionRecord,
                                 index=PrincipalRawIndex(family=family),
@@ -140,7 +140,7 @@ class CreatedTimeRawIndex(RawIntegerValueIndex):
     pass
 
 
-def CreatedTimeIndex(family=None):
+def CreatedTimeIndex(family=BTrees.family64):
     return NormalizationWrapper(field_name='createdTime',
                                 interface=ITransactionRecord,
                                 index=CreatedTimeRawIndex(family=family),
@@ -154,7 +154,7 @@ class ValidatingMimeType(object):
 
     __slots__ = ('mimeType',)
 
-    def __init__(self, obj, default=None):
+    def __init__(self, obj, unused_default):
         if IRecordable.providedBy(obj):
             source = IContentTypeAware(obj, obj)
             self.mimeType = getattr(source, 'mimeType', None) \
@@ -173,7 +173,7 @@ class ValidatingLocked(object):
 
     __slots__ = ('locked',)
 
-    def __init__(self, obj, default=None):
+    def __init__(self, obj, unused_default):
         if IRecordable.providedBy(obj):
             self.locked = obj.isLocked()
 
@@ -190,7 +190,7 @@ class ValidatingChildOrderLocked(object):
 
     __slots__ = ('child_order_locked',)
 
-    def __init__(self, obj, default=None):
+    def __init__(self, obj, unused_default):
         if IRecordableContainer.providedBy(obj):
             self.child_order_locked = obj.isChildOrderLocked()
 
@@ -315,7 +315,7 @@ def get_objects(index, provided, catalog, intids=None):
                 yield obj
 
 
-def get_transactions(catalog=None, intids=None, **kwargs):
+def get_transactions(catalog=None, intids=None):
     """
     return the transaction records in the catalog
     """
@@ -323,7 +323,7 @@ def get_transactions(catalog=None, intids=None, **kwargs):
     return get_objects(IX_TID, ITransactionRecord, catalog, intids)
 
 
-def get_recordables(catalog=None, intids=None, **kwargs):
+def get_recordables(catalog=None, intids=None):
     """
     return the recordable objects in the catalog
     """
