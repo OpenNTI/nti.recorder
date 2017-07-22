@@ -28,7 +28,6 @@ from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 from nti.externalization.representation import WithRepr
 
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
-from nti.recorder.interfaces import TRX_RECORD_HISTORY_KEY
 
 from nti.recorder.interfaces import ITransactionRecord
 from nti.recorder.interfaces import ITransactionRecordHistory
@@ -83,47 +82,32 @@ class TransactionRecord(PersistentCreatedModDateTrackingObject,
             return NotImplemented
 
 
-
 deprecated('TransactionRecordHistory', 'No longer used')
 class TransactionRecordHistory(Persistent, Contained):
     _records = ()
 
 
 def has_transactions(obj):
-    result = False
-    try:
-        annotations = obj.__annotations__
-        history = annotations.get(TRX_RECORD_HISTORY_KEY, None)
-        result = bool(history)
-    except AttributeError:
-        pass
-    return result
+    history = ITransactionRecordHistory(obj)
+    return bool(history)
 hasTransactions = has_transactions
 
 
 def get_transactions(obj, sort=False, descending=True):
     result = []
-    try:
-        annotations = obj.__annotations__
-        history = annotations.get(TRX_RECORD_HISTORY_KEY, None)
-        if history:
-            result.extend(history.records())
-        if sort:
-            result.sort(reverse=descending)
-    except AttributeError:
-        pass
+    history = ITransactionRecordHistory(obj)
+    if history:
+        result.extend(history.records())
+    if sort:
+        result.sort(reverse=descending)
     return result
 getTransactions = get_transactions
 
 
 def remove_transaction_history(obj):
-    try:
-        annotations = obj.__annotations__
-        history = annotations.pop(TRX_RECORD_HISTORY_KEY, None)
-        if history:
-            return history.clear()
-    except AttributeError:
-        pass
+    history = ITransactionRecordHistory(obj)
+    if history:
+        return history.clear()
     return 0
 removeTransactionHistory = remove_history = remove_transaction_history
 
@@ -138,19 +122,14 @@ appendTransactions = append_transactions = append_records
 
 
 def copy_transaction_history(source, target, clear=True):
-    try:
-        annotations = source.__annotations__
-        source_history = annotations.pop(TRX_RECORD_HISTORY_KEY, None)
-        if not source_history:
-            return 0
-        records = list(source_history.records())
-        append_records(target, records)
-        if clear:
-            source_history.clear(event=False)  # don't remove intids
-        return len(records)
-    except AttributeError:
-        pass
-    return 0
+    source_history = ITransactionRecordHistory(source)
+    if not source_history:
+        return 0
+    records = list(source_history.records())
+    append_records(target, records)
+    if clear:
+        source_history.clear(event=False)  # don't remove intids
+    return len(records)
 copyTransactionHistory = copy_history = copy_transaction_history
 
 

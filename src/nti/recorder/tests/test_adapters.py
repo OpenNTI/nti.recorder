@@ -10,7 +10,6 @@ __docformat__ = "restructuredtext en"
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
-from hamcrest import has_key
 from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
@@ -27,7 +26,6 @@ from persistent.persistence import Persistent
 from nti.base._compat import text_
 
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
-from nti.recorder.interfaces import TRX_RECORD_HISTORY_KEY
 
 from nti.recorder.interfaces import ITransactionRecordHistory
 
@@ -92,8 +90,7 @@ class TestAdapters(unittest.TestCase):
         assert_that(has_transactions(f2), is_(True))
 
         assert_that(remove_history(f), is_(1))
-        assert_that(f.__annotations__,
-                    does_not(has_key(TRX_RECORD_HISTORY_KEY)))
+        assert_that(has_transactions(f), is_(False))
         
     def test_query(self):
         f = Foo()
