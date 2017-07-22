@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import component
 from zope import interface
 
 from zope.interface.interfaces import ObjectEvent
@@ -186,3 +187,21 @@ class ObjectChildOrderLockedEvent(ObjectEvent):
 @interface.implementer(IObjectChildOrderUnlockedEvent)
 class ObjectChildOrderUnlockedEvent(ObjectEvent):
     pass
+
+
+class IRecordables(interface.Interface):
+    """
+    A predicate to return recordable objects 
+
+    These will typically be registered as named utilities
+    """
+
+    def iter_objects():
+        pass
+
+
+def get_recordables():
+    predicates = component.getUtilitiesFor(IRecordables)
+    for predicate in list(predicates):
+        for obj in predicate.iter_objects():
+            yield obj
