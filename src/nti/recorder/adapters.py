@@ -92,25 +92,28 @@ class TransactionRecordContainer(BTreeContainer):
         for v in self._SampleContainer__data.values():
             yield v
 
-    def query(self, tid=None, principal=None, record_type=None, 
+    def query(self, tid=None, principal=None, record_type=None,
               start_time=None, end_time=None):
 
-        # filter by tid/pricipal/record_type
-        def _main_filter(record):
-            return  (not tid or tid == record.tid) \
-                and (not principal or principal == record.principal) \
-                and (not record_type or record_type == record.type)
-        result = filter(_main_filter, self.records())
-        
+        if tid or principal or record_type:
+            # filter by tid/pricipal/record_type
+            def _main_filter(record):
+                return  (not tid or tid == record.tid) \
+                    and (not principal or principal == record.principal) \
+                    and (not record_type or record_type == record.type)
+            result = filter(_main_filter, self.records())
+        else:
+            result = self.records()
+
         # filter by time
         if start_time is not None or end_time is not None:
             start_time = 0 if not start_time else start_time
             end_time = time.time() if not end_time else end_time
-            
+
             def _time_filter(record):
                 created = record.createdTime
                 return (created >= start_time and created <= end_time)
-            
+
             result = filter(_time_filter, result)
 
         # return
