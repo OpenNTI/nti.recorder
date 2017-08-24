@@ -17,11 +17,6 @@ Interfaces
 
 .. automodule:: nti.recorder.interfaces
 
-Utilities
-=========
-
-.. automodule:: nti.recorder
-
 Mixins
 ======
 
@@ -37,7 +32,7 @@ Subscribers
 
 .. automodule:: nti.recorder.subscribers
 
-Utils
-=====
+Utilities
+=========
 
 .. automodule:: nti.recorder.utils
