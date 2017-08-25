@@ -134,6 +134,7 @@ copyTransactionHistory = copy_history = copy_transaction_history
 
 
 def copy_records(target, records=()):
+    records = records or ()
     history = ITransactionRecordHistory(target)
     history.extend(records)
     return len(records)
