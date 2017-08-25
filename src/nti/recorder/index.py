@@ -44,8 +44,8 @@ from nti.zope_catalog.interfaces import IMetadataCatalog
 
 from nti.zope_catalog.string import StringTokenNormalizer
 
-CATALOG_NAME = 'nti.dataserver.++etc++recorder-catalog'
-RECORDABLE_CATALOG_NAME = CATALOG_NAME
+RECORDABLE_CATALOG_NAME = 'nti.dataserver.++etc++recorder-catalog'
+CATALOG_NAME = RECORDABLE_CATALOG_NAME  # BWC
 
 TRX_RECORD_CATALOG_NAME = 'nti.dataserver.++etc++trxrecord-catalog'
 
@@ -228,7 +228,7 @@ def create_recorder_catalog(catalog=None, family=BTrees.family64):
 
 
 def get_recorder_catalog(registry=component):
-    return registry.queryUtility(IMetadataCatalog, name=CATALOG_NAME)
+    return registry.queryUtility(IMetadataCatalog, name=RECORDABLE_CATALOG_NAME)
 get_catalog = get_recorder_catalog
 
 
@@ -240,11 +240,11 @@ def install_recorder_catalog(site_manager_container, intids=None):
         return catalog
 
     catalog = create_recorder_catalog(family=intids.family)
-    locate(catalog, site_manager_container, CATALOG_NAME)
+    locate(catalog, site_manager_container, RECORDABLE_CATALOG_NAME)
     intids.register(catalog)
     lsm.registerUtility(catalog,
                         provided=IMetadataCatalog,
-                        name=CATALOG_NAME)
+                        name=RECORDABLE_CATALOG_NAME)
 
     for index in catalog.values():
         intids.register(index)
