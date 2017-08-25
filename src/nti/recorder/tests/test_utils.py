@@ -25,7 +25,9 @@ from persistent.persistence import Persistent
 
 from nti.recorder.mixins import RecordableMixin
 
+from nti.recorder.record import copy_records
 from nti.recorder.record import get_transactions
+
 
 from nti.recorder.utils import txn_id
 from nti.recorder.utils import decompress
@@ -86,4 +88,9 @@ class TestSubscriber(unittest.TestCase):
         assert_that(record, has_property('tid', is_(txn_id())))
 
         records = get_transactions(recordable)
+        assert_that(records, has_length(2))
+
+        other = Recordable()
+        copy_records(other, records)
+        records = get_transactions(other)
         assert_that(records, has_length(2))
