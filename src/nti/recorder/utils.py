@@ -10,8 +10,12 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 import zlib
-import pickle
 from io import BytesIO
+
+try:
+    from six.moves import cPickle as pickle
+except ImportError:
+    import pickle
 
 from zope import lifecycleevent
 
