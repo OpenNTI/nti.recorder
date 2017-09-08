@@ -105,8 +105,8 @@ html_static_path = ['_static']
 
 # -- Options for HTMLHelp output ------------------------------------------
 
-# Output file recorder name for HTML help builder.
-htmlhelp_recordername = 'ntirecorderdoc'
+# Output file base name for HTML help builder.
+htmlhelp_basename = 'ntirecorderdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
