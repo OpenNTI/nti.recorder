@@ -45,7 +45,7 @@ class TestIndex(unittest.TestCase):
         assert_that(isinstance(catalog, MetadataRecorderCatalog), 
                     is_(True))
         assert_that(catalog, has_length(3))
-        # text index
+        # test index
         catalog.super_index_doc(1, recordable)
         uids = list(get_recordables(catalog=catalog))
         assert_that(uids, has_length(1))
