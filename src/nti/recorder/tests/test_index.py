@@ -33,7 +33,7 @@ from nti.recorder.record import TransactionRecord
 from nti.recorder.tests import SharedConfiguringTestLayer
 
 
-class TestAdapters(unittest.TestCase):
+class TestIndex(unittest.TestCase):
 
     layer = SharedConfiguringTestLayer
 
