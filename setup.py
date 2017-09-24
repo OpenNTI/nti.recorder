@@ -7,6 +7,7 @@ entry_points = {
 }
 
 TESTS_REQUIRE = [
+    'nti.mimetype',
     'nti.testing',
     'zope.dottedname',
     'zope.testrunner',
@@ -23,7 +24,7 @@ setup(
     version=_read('version.txt').strip(),
     author='Jason Madden',
     author_email='jason@nextthought.com',
-    description="NTI recorder",
+    description="NTI Recorder",
     long_description=(_read('README.rst') + '\n\n' + _read('CHANGES.rst')),
     license='Apache',
     keywords='recorder',
@@ -33,6 +34,8 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
@@ -70,6 +73,11 @@ setup(
     ],
     extras_require={
         'test': TESTS_REQUIRE,
+        'docs': [
+            'Sphinx',
+            'repoze.sphinx.autointerface',
+            'sphinx_rtd_theme',
+        ],
     },
     entry_points=entry_points,
     test_suite="nti.recorder.tests",
