@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -53,7 +54,7 @@ class TestSubscriber(unittest.TestCase):
         assert_that(recordable, has_property('locked', is_(False)))
 
         record = record_transaction(recordable, principal=u"ichigo",
-                                    descriptions=(u'a',), 
+                                    descriptions=(u'a',),
                                     ext_value={u"a": u"b"})
 
         assert_that(record, is_not(none()))
@@ -80,7 +81,7 @@ class TestSubscriber(unittest.TestCase):
         records = get_transactions(recordable)
         assert_that(records, has_length(1))
 
-        record = record_transaction(recordable, principal=u'aizen', 
+        record = record_transaction(recordable, principal=u'aizen',
                                     type_=u'xyz',
                                     descriptions=(u'test_attribute',))
         assert_that(record, is_not(none()))
