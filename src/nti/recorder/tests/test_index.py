@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -42,7 +43,7 @@ class TestIndex(unittest.TestCase):
         recordable.lock()
         # test catalog
         catalog = create_recorder_catalog(family=BTrees.family64)
-        assert_that(isinstance(catalog, MetadataRecorderCatalog), 
+        assert_that(isinstance(catalog, MetadataRecorderCatalog),
                     is_(True))
         assert_that(catalog, has_length(3))
         # test index
@@ -54,13 +55,13 @@ class TestIndex(unittest.TestCase):
     def test_get_trasanction(self):
         record = TransactionRecord(principal=u'ichigo',
                                    type=u'create',
-                                   tid=u'tx123', 
+                                   tid=u'tx123',
                                    attributes=(u'bankai',),
-                                   external_value={u'name':u'tensa'})
+                                   external_value={u'name': u'tensa'})
         record.lastModified = record.createdTime = 100000
         # test catalog
         catalog = create_transaction_catalog(family=BTrees.family64)
-        assert_that(isinstance(catalog, MetadataTransactionCatalog), 
+        assert_that(isinstance(catalog, MetadataTransactionCatalog),
                     is_(True))
         assert_that(catalog, has_length(6))
         # text index

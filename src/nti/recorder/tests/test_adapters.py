@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 # disable: accessing protected members, too many methods
 # pylint: disable=W0212,R0904
@@ -91,12 +92,12 @@ class TestAdapters(unittest.TestCase):
 
         assert_that(remove_history(f), is_(1))
         assert_that(has_transactions(f), is_(False))
-        
+
     def test_query(self):
         f = Foo()
         history = ITransactionRecordHistory(f, None)
         for x in range(5):
-            current = (x+1) * 5
+            current = (x + 1) * 5
             principal = u'ichigo' if x % 2 == 0 else u'aizen'
             record = TransactionRecord(tid=text_(str(x)),
                                        principal=principal,
@@ -107,10 +108,9 @@ class TestAdapters(unittest.TestCase):
         assert_that(history.query(tid=u'0'), has_length(1))
         assert_that(history.query(principal=u'ichigo'), has_length(3))
         assert_that(history.query(principal=u'aizen'), has_length(2))
-        assert_that(history.query(record_type=TRX_TYPE_UPDATE), 
+        assert_that(history.query(record_type=TRX_TYPE_UPDATE),
                     has_length(5))
 
         assert_that(history.query(start_time=10), has_length(4))
         assert_that(history.query(start_time=5, end_time=10), has_length(2))
         assert_that(history.query(end_time=7), has_length(1))
-        
