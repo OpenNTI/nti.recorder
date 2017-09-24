@@ -4,10 +4,9 @@
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from zope import component
 from zope import interface
@@ -41,7 +40,7 @@ class IRecordable(interface.Interface):
     """
     A marker interface for objects whose changes are to be recorded
     """
-    locked = Bool(title=u"If this object is locked.", 
+    locked = Bool(title=u"If this object is locked.",
                   default=False, required=False)
     locked.setTaggedValue('_ext_excluded_out', True)
 
