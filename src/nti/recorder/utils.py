@@ -11,10 +11,7 @@ from __future__ import absolute_import
 import zlib
 from io import BytesIO
 
-try:
-    from six.moves import cPickle as pickle
-except ImportError:
-    import pickle
+from six.moves import cPickle as pickle
 
 from zope import lifecycleevent
 
