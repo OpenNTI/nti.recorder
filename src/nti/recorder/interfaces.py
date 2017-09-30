@@ -21,8 +21,8 @@ from nti.base.interfaces import ILastModified
 
 from nti.schema.field import Bool
 from nti.schema.field import Object
-from nti.schema.field import TextLine
 from nti.schema.field import IndexedIterable
+from nti.schema.field import DecodingValidTextLine as TextLine
 
 TRX_RECORD_HISTORY_KEY = 'nti.recorder.record.TransactionRecordHistory'
 
@@ -122,19 +122,29 @@ class ITransactionRecord(IContained, ICreated, ILastModified):
 class ITransactionRecordHistory(IContained):
 
     def add(record):
-        pass
+        """
+        Add a transaction record"
+        """
 
     def extend(records):
-        pass
+        """
+        Add an iterable of transaction records"
+        """
 
     def remove(record):
-        pass
+        """
+        remove a transaction record
+        """
 
     def clear(event=True):
-        pass
+        """
+        clear all the records in this container
+        """
 
     def records():
-        pass
+        """
+        return an iterable of transaction records in this container
+        """
 
     def query(self, tid=None, principal=None, record_type=None,
               start_time=None, end_time=None):
@@ -196,7 +206,9 @@ class IRecordables(interface.Interface):
     """
 
     def iter_objects():
-        pass
+        """
+        return an iterable of :class:`.IRecordable` objects
+        """
 
 
 def get_recordables():

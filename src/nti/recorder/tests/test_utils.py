@@ -24,14 +24,18 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent.persistence import Persistent
 
+from nti.externalization.persistence import NoPickle
+
 from nti.recorder.mixins import RecordableMixin
 
 from nti.recorder.record import copy_records
 from nti.recorder.record import get_transactions
 
-
 from nti.recorder.utils import txn_id
+from nti.recorder.utils import compress
 from nti.recorder.utils import decompress
+from nti.recorder.utils import is_created
+from nti.recorder.utils import current_principal
 from nti.recorder.utils import record_transaction
 
 from nti.recorder.tests import SharedConfiguringTestLayer
@@ -95,3 +99,14 @@ class TestSubscriber(unittest.TestCase):
         copy_records(other, records)
         records = get_transactions(other)
         assert_that(records, has_length(2))
+
+        assert_that(is_created(other), is_(False))
+
+    def test_current_principal(self):
+        assert_that(current_principal(False), is_(none()))
+
+    def test_compress(self):
+        @NoPickle
+        class Foo(object):
+            pass
+        assert_that(compress(Foo()), is_(none()))

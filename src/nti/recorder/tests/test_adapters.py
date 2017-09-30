@@ -59,12 +59,25 @@ class TestAdapters(unittest.TestCase):
         assert_that(bool(history), is_(False))
         record = TransactionRecord(tid=u'a',
                                    principal=u'ichigo',
-                                   attributes=(u'foo',))
+                                   attributes=(u'shikai',))
         history.add(record)
         assert_that(history, has_length(1))
-        assert_that(list(history.records()), is_([record]))
         assert_that(bool(history), is_(True))
-        assert_that(record, has_property('__parent__', is_(history)))
+        assert_that(list(history.records()), is_([record]))
+        assert_that(record,
+                    has_property('__parent__', is_(history)))
+
+        assert_that(list(history.sublocations()),
+                    has_length(1))
+
+        history.remove(record)
+        assert_that(history, has_length(0))
+
+        record = TransactionRecord(tid=u'b',
+                                   principal=u'ichigo',
+                                   attributes=(u'bankai',))
+        history.add(record)
+
         r = history.clear(False)
         assert_that(r, is_(1))
         assert_that(history, has_length(0))
