@@ -9,20 +9,31 @@ from __future__ import absolute_import
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
+from hamcrest import none
 from hamcrest import is_in
 from hamcrest import is_not
 from hamcrest import has_length
 from hamcrest import assert_that
 does_not = is_not
 
-import BTrees
+import fudge
 import unittest
 
+import BTrees
+
+from zope import component
+
+from nti.zope_catalog.interfaces import IMetadataCatalog
+
+from nti.recorder.index import RECORDABLE_CATALOG_NAME
+from nti.recorder.index import TRX_RECORD_CATALOG_NAME
 
 from nti.recorder.index import get_recordables
 from nti.recorder.index import get_transactions
 from nti.recorder.index import create_recorder_catalog
+from nti.recorder.index import install_recorder_catalog
 from nti.recorder.index import create_transaction_catalog
+from nti.recorder.index import install_transaction_catalog
 
 from nti.recorder.index import MetadataRecorderCatalog
 from nti.recorder.index import MetadataTransactionCatalog
@@ -66,6 +77,29 @@ class TestIndex(unittest.TestCase):
         assert_that(catalog, has_length(6))
         # text index
         catalog.super_index_doc(1, record)
-        uids = list(get_transactions(catalog=catalog))
+        uids = list(get_transactions(catalog))
         assert_that(uids, has_length(1))
         assert_that(1, is_in(uids))
+
+        uids = list(get_transactions(catalog=catalog))
+        intids = fudge.Fake().provides('queryObject').returns(record)
+        objs = list(get_transactions(catalog, intids))
+        assert_that(objs, has_length(1))
+
+    def test_install_recorder_catalog(self):
+        intids = fudge.Fake().provides('register').has_attr(family=BTrees.family64)
+        catalog = install_recorder_catalog(component, intids)
+        assert_that(catalog, is_not(none()))
+        assert_that(install_recorder_catalog(component, intids),
+                    is_(catalog))
+        component.getGlobalSiteManager().unregisterUtility(catalog, IMetadataCatalog,
+                                                           RECORDABLE_CATALOG_NAME)
+
+    def test_install_transaction_catalog(self):
+        intids = fudge.Fake().provides('register').has_attr(family=BTrees.family64)
+        catalog = install_transaction_catalog(component, intids)
+        assert_that(catalog, is_not(none()))
+        assert_that(install_transaction_catalog(component, intids),
+                    is_(catalog))
+        component.getGlobalSiteManager().unregisterUtility(catalog, IMetadataCatalog,
+                                                           TRX_RECORD_CATALOG_NAME)
