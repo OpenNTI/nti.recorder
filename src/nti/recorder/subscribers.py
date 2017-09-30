@@ -28,10 +28,14 @@ from nti.recorder.utils import record_transaction
 logger = __import__('logging').getLogger(__name__)
 
 
+def disallow_recording(obj):
+    return queryInteraction() is None or IConnection(obj, None) is None
+
+
 @component.adapter(IRecordable, IObjectModifiedFromExternalEvent)
 def _record_modification(obj, event):
     # XXX: don't process if batch update or new object
-    if queryInteraction() is None or IConnection(obj, None) is None:
+    if disallow_recording(obj):
         return
     history = ITransactionRecordHistory(obj)
     record_transaction(recordable=obj,
