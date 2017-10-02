@@ -26,6 +26,8 @@ from persistent.persistence import Persistent
 
 from nti.externalization.persistence import NoPickle
 
+from nti.recorder.interfaces import ITransactionRecordHistory
+
 from nti.recorder.mixins import RecordableMixin
 
 from nti.recorder.record import copy_records
@@ -82,12 +84,17 @@ class TestSubscriber(unittest.TestCase):
                                     descriptions=(u'MimeType',))
         assert_that(record, none())
 
+        # No username
+        record = record_transaction(recordable, principal=None, type_=u'create')
+        assert_that(record, none())
+
         records = get_transactions(recordable)
         assert_that(records, has_length(1))
 
         record = record_transaction(recordable, principal=u'aizen',
                                     type_=u'xyz',
-                                    descriptions=(u'test_attribute',))
+                                    descriptions=((u'test_attribute',),),
+                                    createdTime=100)
         assert_that(record, is_not(none()))
         assert_that(record, has_property('type', is_('xyz')))
         assert_that(record, has_property('tid', is_(txn_id())))
@@ -101,6 +108,16 @@ class TestSubscriber(unittest.TestCase):
         assert_that(records, has_length(2))
 
         assert_that(is_created(other), is_(False))
+        assert_that(is_created(None), is_(False))
+        
+        class Fake(object):
+            locked = False
+        fake = Fake()
+        record = record_transaction(fake, principal=u'aizen',
+                                    type_=u'coverage',
+                                    descriptions=u'a',
+                                    history=ITransactionRecordHistory(recordable))
+        assert_that(fake, has_property('locked', is_(True)))
 
     def test_current_principal(self):
         assert_that(current_principal(False), is_(none()))

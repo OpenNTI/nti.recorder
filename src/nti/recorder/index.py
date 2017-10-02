@@ -95,7 +95,7 @@ class ValidatingRecordableIntID(object):
 
     __slots__ = ('intid',)
 
-    def __init__(self, obj, unused_default):
+    def __init__(self, obj, unused_default=None):
         if ITransactionRecord.providedBy(obj):
             source = find_interface(obj, IRecordable)
             intids = component.queryUtility(IIntIds)  # test mode
@@ -155,11 +155,14 @@ class ValidatingMimeType(object):
 
     __slots__ = ('mimeType',)
 
-    def __init__(self, obj, unused_default):
+    def __init__(self, obj, unused_default=None):
         if IRecordable.providedBy(obj):
-            source = IContentTypeAware(obj, obj)
-            self.mimeType = getattr(source, 'mimeType', None) \
+            for source in (obj, IContentTypeAware(obj, None)):
+                mimeType =  getattr(source, 'mimeType', None) \
                          or getattr(source, 'mime_type', None)
+                if mimeType is None:
+                    self.mimeType = mimeType
+                    break
 
     def __reduce__(self):
         raise TypeError()
@@ -174,7 +177,7 @@ class ValidatingLocked(object):
 
     __slots__ = ('locked',)
 
-    def __init__(self, obj, unused_default):
+    def __init__(self, obj, unused_default=None):
         if IRecordable.providedBy(obj):
             self.locked = obj.isLocked()
 
@@ -191,7 +194,7 @@ class ValidatingChildOrderLocked(object):
 
     __slots__ = ('child_order_locked',)
 
-    def __init__(self, obj, unused_default):
+    def __init__(self, obj, unused_default=None):
         if IRecordableContainer.providedBy(obj):
             self.child_order_locked = obj.isChildOrderLocked()
 

@@ -87,7 +87,7 @@ def txn_id():
     return u"txn.%s" % get_thread_ident()
 
 
-def _get_attributes(descriptions):
+def get_attributes(descriptions):
     if      descriptions is not None \
         and not isinstance(descriptions, (tuple, list, set)):
         descriptions = (descriptions,)
@@ -110,13 +110,14 @@ def _get_attributes(descriptions):
         else:
             _accum((a,))
     return result
+_get_attributes = get_attributes # BWC
 
 
 def record_transaction(recordable, principal=None, descriptions=(),
                        ext_value=None, type_=TRX_TYPE_UPDATE, history=None,
                        lock=True, createdTime=None):
     __traceback_info__ = recordable, principal, ext_value
-    attributes = _get_attributes(descriptions)
+    attributes = get_attributes(descriptions)
     if not attributes and type_ == TRX_TYPE_UPDATE:
         # Take care not to record anything that's not an actual edit.
         return

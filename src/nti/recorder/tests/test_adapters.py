@@ -33,6 +33,7 @@ from nti.recorder.interfaces import ITransactionRecordHistory
 from nti.recorder.mixins import RecordableMixin
 
 from nti.recorder.record import copy_records
+from nti.recorder.record import append_records
 from nti.recorder.record import remove_history
 from nti.recorder.record import get_transactions
 from nti.recorder.record import has_transactions
@@ -42,7 +43,7 @@ from nti.recorder.tests import SharedConfiguringTestLayer
 
 
 @interface.implementer(IAttributeAnnotatable)
-class Foo(Persistent, RecordableMixin):
+class Recordable(Persistent, RecordableMixin):
     pass
 
 
@@ -51,7 +52,7 @@ class TestAdapters(unittest.TestCase):
     layer = SharedConfiguringTestLayer
 
     def test_adapter(self):
-        f = Foo()
+        f = Recordable()
         history = ITransactionRecordHistory(f, None)
         assert_that(history, is_not(none()))
         assert_that(history, has_length(0))
@@ -81,33 +82,37 @@ class TestAdapters(unittest.TestCase):
         r = history.clear(False)
         assert_that(r, is_(1))
         assert_that(history, has_length(0))
+        
+        append_records(f, record)
+        assert_that(history, has_length(1))
 
     def test_funcs(self):
-        f = Foo()
+        f = Recordable()
         assert_that(has_transactions(f), is_(False))
         history = ITransactionRecordHistory(f)
         record = TransactionRecord(tid=u'a',
                                    principal=u'ichigo',
-                                   attributes=(u'foo',))
+                                   attributes=(u'Recordable',))
         history.add(record)
 
         records = list(history.records())
         assert_that(records, has_length(1))
         assert_that(has_transactions(f), is_(True))
 
-        trxs = get_transactions(f)
+        trxs = get_transactions(f, True)
         assert_that(trxs, has_length(1))
         assert_that(trxs[0], is_(record))
 
-        f2 = Foo()
+        f2 = Recordable()
         copy_records(f2, records)
         assert_that(has_transactions(f2), is_(True))
 
         assert_that(remove_history(f), is_(1))
         assert_that(has_transactions(f), is_(False))
+        assert_that(remove_history(f), is_(0))
 
     def test_query(self):
-        f = Foo()
+        f = Recordable()
         history = ITransactionRecordHistory(f, None)
         for x in range(5):
             current = (x + 1) * 5
