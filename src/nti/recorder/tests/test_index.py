@@ -17,11 +17,14 @@ from hamcrest import assert_that
 does_not = is_not
 
 import fudge
+import pickle
 import unittest
 
 import BTrees
 
 from zope import component
+
+from zope.intid.interfaces import IIntIds
 
 from nti.zope_catalog.interfaces import IMetadataCatalog
 
@@ -35,10 +38,16 @@ from nti.recorder.index import install_recorder_catalog
 from nti.recorder.index import create_transaction_catalog
 from nti.recorder.index import install_transaction_catalog
 
+from nti.recorder.index import ValidatingLocked
+from nti.recorder.index import ValidatingMimeType
+from nti.recorder.index import ValidatingRecordableIntID
+from nti.recorder.index import ValidatingChildOrderLocked
+
 from nti.recorder.index import MetadataRecorderCatalog
 from nti.recorder.index import MetadataTransactionCatalog
 
 from nti.recorder.mixins import RecordableMixin
+from nti.recorder.mixins import RecordableContainerMixin
 
 from nti.recorder.record import TransactionRecord
 
@@ -49,6 +58,14 @@ class TestIndex(unittest.TestCase):
 
     layer = SharedConfiguringTestLayer
 
+    def test_pickle(self):
+        for factory in (ValidatingChildOrderLocked,
+                        ValidatingRecordableIntID, 
+                        ValidatingMimeType,
+                        ValidatingLocked):
+            with self.assertRaises(TypeError):
+                pickle.dumps(factory(None, None))
+
     def test_get_recordables(self):
         recordable = RecordableMixin()
         recordable.lock()
@@ -57,11 +74,19 @@ class TestIndex(unittest.TestCase):
         assert_that(isinstance(catalog, MetadataRecorderCatalog),
                     is_(True))
         assert_that(catalog, has_length(3))
+        # no op
+        catalog.index_doc(1, recordable) 
+        uids = list(get_recordables(catalog=catalog))
+        assert_that(uids, has_length(0))
         # test index
         catalog.super_index_doc(1, recordable)
         uids = list(get_recordables(catalog=catalog))
         assert_that(uids, has_length(1))
         assert_that(1, is_in(uids))
+        
+        container = RecordableContainerMixin()
+        container.mimeType = 'foo/foo'
+        catalog.force_index_doc(2, container)
 
     def test_get_trasanction(self):
         record = TransactionRecord(principal=u'ichigo',
@@ -70,19 +95,28 @@ class TestIndex(unittest.TestCase):
                                    attributes=(u'bankai',),
                                    external_value={u'name': u'tensa'})
         record.lastModified = record.createdTime = 100000
+        record.__parent__ = RecordableMixin()
         # test catalog
         catalog = create_transaction_catalog(family=BTrees.family64)
         assert_that(isinstance(catalog, MetadataTransactionCatalog),
                     is_(True))
         assert_that(catalog, has_length(6))
-        # text index
-        catalog.super_index_doc(1, record)
-        uids = list(get_transactions(catalog))
-        assert_that(uids, has_length(1))
-        assert_that(1, is_in(uids))
-
+        # no op
+        catalog.index_doc(1, record) 
         uids = list(get_transactions(catalog=catalog))
+        assert_that(uids, has_length(0))
+
         intids = fudge.Fake().provides('queryObject').returns(record)
+        intids.provides('queryId').returns(10)
+        component.getGlobalSiteManager().registerUtility(intids, IIntIds)
+
+        # text index
+        catalog.force_index_doc(1, record)
+        objs = list(get_transactions(catalog))
+        assert_that(objs, has_length(1))
+        component.getGlobalSiteManager().unregisterUtility(intids, IIntIds)
+ 
+        uids = list(get_transactions(catalog=catalog))
         objs = list(get_transactions(catalog, intids))
         assert_that(objs, has_length(1))
 
