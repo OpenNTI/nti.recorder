@@ -26,7 +26,7 @@ from ZODB.utils import serial_repr
 import transaction
 try:
     from transaction._compat import get_thread_ident
-except ImportError:
+except ImportError:  # pragma: no cover
     def get_thread_ident():
         return id(transaction.get())
 
