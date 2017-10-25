@@ -80,5 +80,4 @@ setup(
         ],
     },
     entry_points=entry_points,
-    test_suite="nti.recorder.tests",
 )
