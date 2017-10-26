@@ -26,6 +26,8 @@ from persistent.persistence import Persistent
 
 from nti.base._compat import text_
 
+from nti.recorder.adapters import NoOpTransactionRecordContainer
+
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
 
 from nti.recorder.interfaces import ITransactionRecordHistory
@@ -132,3 +134,23 @@ class TestAdapters(unittest.TestCase):
         assert_that(history.query(start_time=10), has_length(4))
         assert_that(history.query(start_time=5, end_time=10), has_length(2))
         assert_that(history.query(end_time=7), has_length(1))
+
+    def test_noop(self):
+        parent = object()
+        record = Recordable()
+        container = NoOpTransactionRecordContainer()
+        
+        container.__parent__ = parent
+        assert_that(container, has_property('object', is_(parent)))
+        
+        container.add(record)
+        container.extend((record,))
+        assert_that(container, has_length(0))
+        
+        container.remove(record)
+        assert_that(container, has_length(0))
+        container.clear()
+        
+        assert_that(container, has_length(0))
+        assert_that(container.records(), is_(()))
+        assert_that(container.query(), is_(()))
