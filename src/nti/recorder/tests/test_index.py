@@ -87,6 +87,12 @@ class TestIndex(unittest.TestCase):
         container = RecordableContainerMixin()
         container.mimeType = 'foo/foo'
         catalog.force_index_doc(2, container)
+        uids = list(get_recordables(catalog=catalog))
+        assert_that(uids, has_length(2))
+        
+        catalog.unindex_doc(2)
+        uids = list(get_recordables(catalog=catalog))
+        assert_that(uids, has_length(1))
 
     def test_get_trasanction(self):
         record = TransactionRecord(principal=u'ichigo',
