@@ -29,6 +29,7 @@ from nti.externalization.representation import WithRepr
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
 
 from nti.recorder.interfaces import ITransactionRecord
+from nti.recorder.interfaces import ITransactionManager
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 from nti.property.property import alias
@@ -89,8 +90,8 @@ class TransactionRecordHistory(Persistent, Contained):
 
 
 def has_transactions(obj):
-    history = ITransactionRecordHistory(obj, None)
-    return bool(history)
+    manager = ITransactionManager(obj, None)
+    return manager is not None and manager.has_transactions()
 hasTransactions = has_transactions
 
 
@@ -106,8 +107,8 @@ getTransactions = get_transactions
 
 
 def remove_transaction_history(obj):
-    history = ITransactionRecordHistory(obj, None)
-    if history:
+    if has_transactions(obj):
+        history = ITransactionRecordHistory(obj, None)
         return history.clear()
     return 0
 removeTransactionHistory = remove_history = remove_transaction_history
@@ -123,9 +124,9 @@ appendTransactions = append_transactions = append_records
 
 
 def copy_transaction_history(source, target, clear=True):
-    source_history = ITransactionRecordHistory(source, None)
-    if not source_history:
+    if not has_transactions(source):
         return 0
+    source_history = ITransactionRecordHistory(source)
     records = list(source_history.records())
     append_records(target, records)
     if clear:
