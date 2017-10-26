@@ -93,6 +93,10 @@ class TestIndex(unittest.TestCase):
         catalog.unindex_doc(2)
         uids = list(get_recordables(catalog=catalog))
         assert_that(uids, has_length(1))
+        
+        catalog.unindex_doc(1)
+        uids = list(get_recordables(catalog=catalog))
+        assert_that(uids, has_length(0))
 
     def test_get_trasanction(self):
         record = TransactionRecord(principal=u'ichigo',
