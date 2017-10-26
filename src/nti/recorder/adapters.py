@@ -31,6 +31,7 @@ from nti.recorder.interfaces import TRX_RECORD_HISTORY_KEY
 
 from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecord
+from nti.recorder.interfaces import ITransactionManager
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 logger = __import__('logging').getLogger(__name__)
@@ -166,3 +167,18 @@ def TransactionRecordHistoryFactory(obj):
         except (TypeError, AttributeError):
             pass
     return result
+
+
+@component.adapter(IRecordable)
+@interface.implementer(ITransactionManager)
+class DefaultTransactionManager(object):
+    
+    def __init__(self, context):
+        self.context = context
+        
+    def has_transactions(self):
+        try:
+            annotations = self.context.__annotations__
+            return bool(annotations[TRX_RECORD_HISTORY_KEY])
+        except (KeyError, AttributeError):
+            return False

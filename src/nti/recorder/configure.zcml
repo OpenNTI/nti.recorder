@@ -16,6 +16,10 @@
 	<adapter factory=".adapters.TransactionRecordHistoryFactory"
 			 provides=".interfaces.ITransactionRecordHistory"
 			 for=".interfaces.IRecordable" />
+			 
+	<adapter factory=".adapters.DefaultTransactionManager"
+			 provides=".interfaces.ITransactionManager"
+			 for=".interfaces.IRecordable" />
 
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
