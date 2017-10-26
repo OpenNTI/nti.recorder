@@ -160,7 +160,7 @@ class ValidatingMimeType(object):
             for source in (obj, IContentTypeAware(obj, None)):
                 mimeType =  getattr(source, 'mimeType', None) \
                          or getattr(source, 'mime_type', None)
-                if mimeType is None:
+                if mimeType:
                     self.mimeType = mimeType
                     break
 
