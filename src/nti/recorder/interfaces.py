@@ -154,6 +154,17 @@ class ITransactionRecordHistory(IContained):
         """
 
 
+class ITransactionManager(interface.Interface):
+    """
+    An adapter interface for an object transaction manager
+    """
+    
+    def has_transactions():
+        """
+        return if the adapted object has transactions
+        """
+
+
 class IObjectLockedEvent(IObjectEvent):
     """
     An event that is sent, when an object has been locked
