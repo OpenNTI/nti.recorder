@@ -19,6 +19,8 @@ from zope.annotation import factory as an_factory
 
 from zope.container.btree import BTreeContainer
 
+from zope.container.contained import Contained
+
 from zope.location.interfaces import ISublocations
 
 from zope.location.location import locate
@@ -32,6 +34,39 @@ from nti.recorder.interfaces import ITransactionRecord
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 logger = __import__('logging').getLogger(__name__)
+
+
+@component.adapter(IRecordable)
+@interface.implementer(ITransactionRecordHistory)
+class NoOpTransactionRecordContainer(Contained):
+
+    @property
+    def object(self):
+        return self.__parent__
+    recordable = object
+
+    def add(self, record):
+        pass
+    append = add
+
+    def extend(self, records=()):
+        pass
+
+    def remove(self, record):
+        pass
+
+    def records(self):
+        return ()
+
+    def clear(self, event=True):
+        pass
+    reset = clear
+
+    def query(self, *unused_args, **unused_kwargs):
+        return()
+
+    def __len__(self):
+        return 0
 
 
 @component.adapter(IRecordable)
@@ -115,7 +150,7 @@ class TransactionRecordContainer(BTreeContainer):
                 created = record.createdTime
                 return (created >= start_time and created <= end_time)
 
-            result = filter(_time_filter, result)
+            result = [x for x in result if _time_filter(x)]
 
         # return
         return list(result) if not isinstance(result, list) else result
