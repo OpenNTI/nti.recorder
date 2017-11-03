@@ -16,6 +16,9 @@ from hamcrest import assert_that
 from hamcrest import has_property
 does_not = is_not
 
+from nti.testing.matchers import validly_provides
+from nti.testing.matchers import verifiably_provides
+
 import unittest
 
 from zope import interface
@@ -30,6 +33,7 @@ from nti.recorder.adapters import NoOpTransactionRecordContainer
 
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
 
+from nti.recorder.interfaces import ITransactionManager
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 from nti.recorder.mixins import RecordableMixin
@@ -87,7 +91,16 @@ class TestAdapters(unittest.TestCase):
         
         append_records(f, record)
         assert_that(history, has_length(1))
-
+        
+    def test_manager(self):
+        f = Recordable()
+        manager = ITransactionManager(f, None)
+        assert_that(manager,
+                    validly_provides(ITransactionManager))
+        
+        assert_that(manager,
+                    verifiably_provides(ITransactionManager))
+ 
     def test_funcs(self):
         f = Recordable()
         assert_that(has_transactions(f), is_(False))

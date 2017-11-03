@@ -97,9 +97,9 @@ hasTransactions = has_transactions
 
 def get_transactions(obj, sort=False, descending=True):
     result = []
-    history = ITransactionRecordHistory(obj, None)
-    if history:
-        result.extend(history.records())
+    manager = ITransactionManager(obj, None)
+    if manager is not None:
+        result.extend(manager.get_transactions())
     if sort:
         result.sort(reverse=descending)
     return result

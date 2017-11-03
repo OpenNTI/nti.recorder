@@ -38,6 +38,7 @@ from nti.recorder.mixins import RecordableMixin
 
 from nti.recorder.record import TransactionRecord
 
+from nti.recorder.record import get_transactions
 from nti.recorder.record import has_transactions
 from nti.recorder.record import copy_transaction_history
 
@@ -91,8 +92,10 @@ class TestRecord(unittest.TestCase):
         @interface.implementer(IAttributeAnnotatable, IContained)
         class R(RecordableMixin):
             __parent__ = __name__ = None
+
         source = R()
         target = R()
+        assert_that(get_transactions(source), is_([]))
         assert_that(copy_transaction_history(source, target),
                     is_(0))
         record_transaction(source, u'ichigo', type_=u'Shikai')
