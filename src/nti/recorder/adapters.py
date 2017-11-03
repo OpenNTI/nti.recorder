@@ -135,7 +135,7 @@ class TransactionRecordContainer(BTreeContainer):
         if tid or principal or record_type:
             # filter by tid/pricipal/record_type
             def _main_filter(record):
-                return  (not tid or tid == record.tid) \
+                return (not tid or tid == record.tid) \
                     and (not principal or principal == record.principal) \
                     and (not record_type or record_type == record.type)
             result = filter(_main_filter, self.records())
@@ -172,10 +172,10 @@ def TransactionRecordHistoryFactory(obj):
 @component.adapter(IRecordable)
 @interface.implementer(ITransactionManager)
 class DefaultTransactionManager(object):
-    
+
     def __init__(self, context):
         self.context = context
-        
+
     def get_transactions(self):
         try:
             annotations = self.context.__annotations__
