@@ -97,6 +97,7 @@ class IRecordableContainer(IRecordable):
 
 
 class ITransactionRecord(IContained, ICreated, ILastModified):
+
     tid = TextLine(title=u"The transaction/serial id", required=False)
 
     type = TextLine(title=u"The transaction type",
@@ -159,6 +160,11 @@ class ITransactionManager(interface.Interface):
     An adapter interface for an object transaction manager
     """
     
+    def get_transactions():
+        """
+        returns an interable with the adapted object's transactions
+        """
+        
     def has_transactions():
         """
         return if the adapted object has transactions

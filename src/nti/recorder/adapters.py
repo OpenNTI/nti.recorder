@@ -176,6 +176,13 @@ class DefaultTransactionManager(object):
     def __init__(self, context):
         self.context = context
         
+    def get_transactions(self):
+        try:
+            annotations = self.context.__annotations__
+            return annotations[TRX_RECORD_HISTORY_KEY].records()
+        except (KeyError, AttributeError):
+            return ()
+
     def has_transactions(self):
         try:
             annotations = self.context.__annotations__
