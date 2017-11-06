@@ -26,7 +26,7 @@ from zope import component
 
 from zope.intid.interfaces import IIntIds
 
-from nti.zope_catalog.interfaces import IMetadataCatalog
+from nti.zope_catalog.interfaces import IDeferredCatalog
 
 from nti.recorder.index import RECORDABLE_CATALOG_NAME
 from nti.recorder.index import TRX_RECORD_CATALOG_NAME
@@ -75,18 +75,17 @@ class TestIndex(unittest.TestCase):
                     is_(True))
         assert_that(catalog, has_length(3))
         # no op
-        catalog.index_doc(1, recordable) 
         uids = list(get_recordables(catalog=catalog))
         assert_that(uids, has_length(0))
         # test index
-        catalog.super_index_doc(1, recordable)
+        catalog.force_index_doc(1, recordable)
         uids = list(get_recordables(catalog=catalog))
         assert_that(uids, has_length(1))
         assert_that(1, is_in(uids))
         
         container = RecordableContainerMixin()
         container.mimeType = 'foo/foo'
-        catalog.force_index_doc(2, container)
+        catalog.index_doc(2, container)
         uids = list(get_recordables(catalog=catalog))
         assert_that(uids, has_length(2))
         
@@ -112,7 +111,6 @@ class TestIndex(unittest.TestCase):
                     is_(True))
         assert_that(catalog, has_length(6))
         # no op
-        catalog.index_doc(1, record) 
         uids = list(get_transactions(catalog=catalog))
         assert_that(uids, has_length(0))
 
@@ -136,7 +134,7 @@ class TestIndex(unittest.TestCase):
         assert_that(catalog, is_not(none()))
         assert_that(install_recorder_catalog(component, intids),
                     is_(catalog))
-        component.getGlobalSiteManager().unregisterUtility(catalog, IMetadataCatalog,
+        component.getGlobalSiteManager().unregisterUtility(catalog, IDeferredCatalog,
                                                            RECORDABLE_CATALOG_NAME)
 
     def test_install_transaction_catalog(self):
@@ -145,5 +143,5 @@ class TestIndex(unittest.TestCase):
         assert_that(catalog, is_not(none()))
         assert_that(install_transaction_catalog(component, intids),
                     is_(catalog))
-        component.getGlobalSiteManager().unregisterUtility(catalog, IMetadataCatalog,
+        component.getGlobalSiteManager().unregisterUtility(catalog, IDeferredCatalog,
                                                            TRX_RECORD_CATALOG_NAME)

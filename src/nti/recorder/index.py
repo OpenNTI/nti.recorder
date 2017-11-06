@@ -27,8 +27,6 @@ from nti.recorder.interfaces import IRecordableContainer
 
 from nti.traversal.location import find_interface
 
-from nti.zope_catalog.catalog import Catalog
-
 from nti.zope_catalog.datetime import TimestampToNormalized64BitIntNormalizer
 
 from nti.zope_catalog.index import AttributeSetIndex
@@ -39,7 +37,9 @@ from nti.zope_catalog.index import SetIndex as RawSetIndex
 from nti.zope_catalog.index import ValueIndex as RawValueIndex
 from nti.zope_catalog.index import IntegerValueIndex as RawIntegerValueIndex
 
-from nti.zope_catalog.interfaces import IMetadataCatalog
+from nti.zope_catalog.catalog import DeferredCatalog
+
+from nti.zope_catalog.interfaces import IDeferredCatalog
 
 from nti.zope_catalog.string import StringTokenNormalizer
 
@@ -207,16 +207,11 @@ class ChildOrderLockedIndex(AttributeValueIndex):
     interface = default_interface = ValidatingChildOrderLocked
 
 
-@interface.implementer(IMetadataCatalog)
-class MetadataRecorderCatalog(Catalog):
+@interface.implementer(IDeferredCatalog)
+class MetadataRecorderCatalog(DeferredCatalog):
 
-    super_index_doc = Catalog.index_doc
-
-    def index_doc(self, docid, ob):
-        pass
-
-    def force_index_doc(self, docid, ob):
-        self.super_index_doc(docid, ob)
+    def force_index_doc(self, doc_id, obj):  # BWC
+        return super(MetadataRecorderCatalog, self).index_doc(doc_id, obj)
 
 
 def create_recorder_catalog(catalog=None, family=BTrees.family64):
@@ -232,7 +227,7 @@ def create_recorder_catalog(catalog=None, family=BTrees.family64):
 
 
 def get_recorder_catalog(registry=component):
-    return registry.queryUtility(IMetadataCatalog, name=RECORDABLE_CATALOG_NAME)
+    return registry.queryUtility(IDeferredCatalog, name=RECORDABLE_CATALOG_NAME)
 get_catalog = get_recorder_catalog
 
 
@@ -247,7 +242,7 @@ def install_recorder_catalog(site_manager_container, intids=None):
     locate(catalog, site_manager_container, RECORDABLE_CATALOG_NAME)
     intids.register(catalog)
     lsm.registerUtility(catalog,
-                        provided=IMetadataCatalog,
+                        provided=IDeferredCatalog,
                         name=RECORDABLE_CATALOG_NAME)
 
     for index in catalog.values():
@@ -255,20 +250,15 @@ def install_recorder_catalog(site_manager_container, intids=None):
     return catalog
 
 
-@interface.implementer(IMetadataCatalog)
-class MetadataTransactionCatalog(Catalog):
+@interface.implementer(IDeferredCatalog)
+class MetadataTransactionCatalog(DeferredCatalog):
 
-    super_index_doc = Catalog.index_doc
-
-    def index_doc(self, docid, ob):
-        pass
-
-    def force_index_doc(self, docid, ob):
-        self.super_index_doc(docid, ob)
+    def force_index_doc(self, doc_id, obj):  # BWC
+        return super(MetadataTransactionCatalog, self).index_doc(doc_id, obj)
 
 
 def get_transaction_catalog(registry=component):
-    catalog = registry.queryUtility(IMetadataCatalog,
+    catalog = registry.queryUtility(IDeferredCatalog,
                                     name=TRX_RECORD_CATALOG_NAME)
     return catalog
 
@@ -299,7 +289,7 @@ def install_transaction_catalog(site_manager_container, intids=None):
     locate(catalog, site_manager_container, TRX_RECORD_CATALOG_NAME)
     intids.register(catalog)
     lsm.registerUtility(catalog,
-                        provided=IMetadataCatalog,
+                        provided=IDeferredCatalog,
                         name=TRX_RECORD_CATALOG_NAME)
 
     for index in catalog.values():
