@@ -10,8 +10,14 @@ from __future__ import absolute_import
 
 import zlib
 from io import BytesIO
-
 from six.moves import cPickle as pickle
+
+import transaction
+try:
+    from transaction._compat import get_thread_ident
+except ImportError:  # pragma: no cover
+    def get_thread_ident():
+        return id(transaction.get())
 
 from zope import lifecycleevent
 
@@ -22,13 +28,6 @@ from zope.security.management import getInteraction
 from zope.security.management import system_user
 
 from ZODB.utils import serial_repr
-
-import transaction
-try:
-    from transaction._compat import get_thread_ident
-except ImportError:  # pragma: no cover
-    def get_thread_ident():
-        return id(transaction.get())
 
 from nti.base._compat import text_
 
@@ -55,6 +54,7 @@ principal = currentPrincipal = current_principal  # BWC
 
 
 def compress(obj):
+    # pylint: disable=unused-variable,broad-except
     __traceback_info__ = obj
     try:
         bio = BytesIO()
@@ -113,9 +113,11 @@ def get_attributes(descriptions):
 _get_attributes = get_attributes # BWC
 
 
+# pylint: disable=redefined-outer-name
 def record_transaction(recordable, principal=None, descriptions=(),
                        ext_value=None, type_=TRX_TYPE_UPDATE, history=None,
                        lock=True, createdTime=None):
+    # pylint: disable=unused-variable
     __traceback_info__ = recordable, principal, ext_value
     attributes = get_attributes(descriptions)
     if not attributes and type_ == TRX_TYPE_UPDATE:

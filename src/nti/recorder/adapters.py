@@ -85,10 +85,12 @@ class TransactionRecordContainer(BTreeContainer):
         locate(record, parent=self, name=key)
         if IConnection(record, None) is None:
             try:
+                # pylint: disable=too-many-function-args
                 IConnection(self.object).add(record)
             except (TypeError, AttributeError):
                 pass
         lifecycleevent.added(record, self, key)
+        # pylint: disable=attribute-defined-outside-init
         self._p_changed = True
 
     def add(self, record):
@@ -112,6 +114,7 @@ class TransactionRecordContainer(BTreeContainer):
         l = self._BTreeContainer__len
         item = self._SampleContainer__data[key]
         del self._SampleContainer__data[key]
+        # pylint: disable=no-member
         l.change(-1)
         return item
 
@@ -155,6 +158,7 @@ class TransactionRecordContainer(BTreeContainer):
 
         # return
         return list(result) if not isinstance(result, list) else result
+
 _TransactionRecordHistoryFactory = an_factory(TransactionRecordContainer,
                                               TRX_RECORD_HISTORY_KEY)
 
@@ -163,6 +167,7 @@ def TransactionRecordHistoryFactory(obj):
     result = _TransactionRecordHistoryFactory(obj)
     if IConnection(result, None) is None:
         try:
+            # pylint: disable=too-many-function-args
             IConnection(obj).add(result)
         except (TypeError, AttributeError):
             pass

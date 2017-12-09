@@ -28,6 +28,7 @@ class RecordableMixin(object):
 
     locked = False
 
+    # pylint: disable=useless-super-delegation
     def __init__(self, *args, **kwargs):
         super(RecordableMixin, self).__init__(*args, **kwargs)
 
@@ -51,6 +52,7 @@ class RecordableContainerMixin(RecordableMixin):
 
     child_order_locked = False
 
+    # pylint: disable=useless-super-delegation
     def __init__(self, *args, **kwargs):
         super(RecordableContainerMixin, self).__init__(*args, **kwargs)
 
