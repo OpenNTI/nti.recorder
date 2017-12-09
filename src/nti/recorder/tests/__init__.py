@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-# pylint: disable=R0904,W0212,W0221
+# pylint: disable=protected-access,too-many-public-methods,arguments-differ
 
 from zope.component.hooks import setHooks
 

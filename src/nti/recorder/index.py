@@ -29,12 +29,12 @@ from nti.traversal.location import find_interface
 
 from nti.zope_catalog.datetime import TimestampToNormalized64BitIntNormalizer
 
-from nti.zope_catalog.index import AttributeSetIndex
 from nti.zope_catalog.index import AttributeValueIndex
 from nti.zope_catalog.index import NormalizationWrapper
 from nti.zope_catalog.index import IntegerAttributeIndex
 from nti.zope_catalog.index import SetIndex as RawSetIndex
 from nti.zope_catalog.index import ValueIndex as RawValueIndex
+from nti.zope_catalog.index import AttributeSetIndex as RawAttributeSetIndex
 from nti.zope_catalog.index import IntegerValueIndex as RawIntegerValueIndex
 
 from nti.zope_catalog.catalog import DeferredCatalog
@@ -132,7 +132,7 @@ class TypeIndex(AttributeValueIndex):
     default_interface = ITransactionRecord
 
 
-class AttributeSetIndex(AttributeSetIndex):
+class AttributeSetIndex(RawAttributeSetIndex):
     default_field_name = 'attributes'
     default_interface = ITransactionRecord
 

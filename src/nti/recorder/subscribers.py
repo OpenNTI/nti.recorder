@@ -34,7 +34,7 @@ def disallow_recording(obj):
 
 @component.adapter(IRecordable, IObjectModifiedFromExternalEvent)
 def _record_modification(obj, event):
-    # XXX: don't process if batch update or new object
+    # don't process if batch update or new object
     if disallow_recording(obj):
         return
     history = ITransactionRecordHistory(obj)

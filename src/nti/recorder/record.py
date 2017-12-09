@@ -68,7 +68,7 @@ class TransactionRecord(PersistentCreatedModDateTrackingObject,
         return "(%s,%s,%s)" % (self.createdTime, self.principal, self.tid)
 
     @readproperty
-    def creator(self):
+    def creator(self):  # pylint: disable=method-hidden
         return self.principal
 
     def __lt__(self, other):
@@ -91,6 +91,7 @@ class TransactionRecordHistory(Persistent, Contained):
 
 def has_transactions(obj):
     manager = ITransactionManager(obj, None)
+    # pylint: disable=too-many-function-args
     return manager is not None and manager.has_transactions()
 hasTransactions = has_transactions
 
@@ -99,6 +100,7 @@ def get_transactions(obj, sort=False, descending=True):
     result = []
     manager = ITransactionManager(obj, None)
     if manager is not None:
+        # pylint: disable=too-many-function-args
         result.extend(manager.get_transactions())
     if sort:
         result.sort(reverse=descending)
@@ -118,6 +120,7 @@ def append_records(target, records=()):
     if ITransactionRecord.providedBy(records):
         records = (records,)
     history = ITransactionRecordHistory(target)
+    # pylint: disable=too-many-function-args
     history.extend(records)
     return len(records)
 appendTransactions = append_transactions = append_records
@@ -127,9 +130,11 @@ def copy_transaction_history(source, target, clear=True):
     if not has_transactions(source):
         return 0
     source_history = ITransactionRecordHistory(source)
+    # pylint: disable=too-many-function-args
     records = list(source_history.records())
     append_records(target, records)
     if clear:
+        # pylint: disable=redundant-keyword-arg
         source_history.clear(event=False)  # don't remove intids
     return len(records)
 copyTransactionHistory = copy_history = copy_transaction_history
@@ -138,6 +143,7 @@ copyTransactionHistory = copy_history = copy_transaction_history
 def copy_records(target, records=()):
     records = records or ()
     history = ITransactionRecordHistory(target)
+    # pylint: disable=too-many-function-args
     history.extend(records)
     return len(records)
 copyRecords = copy_records
