@@ -8,6 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import six
 import zlib
 from io import BytesIO
 from six.moves import cPickle as pickle
@@ -28,8 +29,6 @@ from zope.security.management import getInteraction
 from zope.security.management import system_user
 
 from ZODB.utils import serial_repr
-
-from nti.base._compat import text_
 
 from nti.externalization.externalization import isSyntheticKey
 
@@ -128,7 +127,7 @@ def record_transaction(recordable, principal=None, descriptions=(),
         history = ITransactionRecordHistory(recordable)
 
     tid = getattr(recordable, '_p_serial', None)
-    tid = text_(serial_repr(tid)) if tid else txn_id()
+    tid = six.text_type(serial_repr(tid)) if tid else txn_id()
     tid = txn_id() if tid == u'0x00' else tid  # new object
 
     principal = current_principal(False) if principal is None else principal
