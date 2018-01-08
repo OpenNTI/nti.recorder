@@ -19,6 +19,7 @@ does_not = is_not
 from nti.testing.matchers import validly_provides
 from nti.testing.matchers import verifiably_provides
 
+import six
 import unittest
 
 from zope import interface
@@ -26,8 +27,6 @@ from zope import interface
 from zope.annotation.interfaces import IAttributeAnnotatable
 
 from persistent.persistence import Persistent
-
-from nti.base._compat import text_
 
 from nti.recorder.adapters import NoOpTransactionRecordContainer
 
@@ -132,7 +131,7 @@ class TestAdapters(unittest.TestCase):
         for x in range(5):
             current = (x + 1) * 5
             principal = u'ichigo' if x % 2 == 0 else u'aizen'
-            record = TransactionRecord(tid=text_(str(x)),
+            record = TransactionRecord(tid=six.text_type(x),
                                        principal=principal,
                                        attributes=(u'bankai',))
             record.createdTime = record.lastModified = current
