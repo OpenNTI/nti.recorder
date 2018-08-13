@@ -97,7 +97,7 @@ def get_attributes(descriptions):
         # Exclude synthetic keys, including mimetype.
         for val in vals:
             if      val \
-                and not isSyntheticKey(val) \
+                and (val == 'Items' or not isSyntheticKey(val)) \
                 and val.lower() != 'mimetype':
                 result.add(val)
 
