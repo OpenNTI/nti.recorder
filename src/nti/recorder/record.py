@@ -110,7 +110,7 @@ getTransactions = get_transactions
 
 def remove_transaction_history(obj):
     if has_transactions(obj):
-        history = ITransactionRecordHistory(obj, None)
+        history = ITransactionRecordHistory(obj)
         return history.clear()
     return 0
 removeTransactionHistory = remove_history = remove_transaction_history
