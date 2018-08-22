@@ -32,6 +32,8 @@ from ZODB.utils import serial_repr
 
 from nti.externalization.externalization import isSyntheticKey
 
+from nti.externalization.interfaces import StandardExternalFields
+
 from nti.recorder.interfaces import TRX_TYPE_CREATE
 from nti.recorder.interfaces import TRX_TYPE_UPDATE
 
@@ -39,6 +41,9 @@ from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecordHistory
 
 from nti.recorder.record import TransactionRecord
+
+ITEMS = StandardExternalFields.ITEMS
+MIMETYPE = StandardExternalFields.MIMETYPE
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -97,8 +102,8 @@ def get_attributes(descriptions):
         # Exclude synthetic keys, including mimetype.
         for val in vals:
             if      val \
-                and (val == 'Items' or not isSyntheticKey(val)) \
-                and val.lower() != 'mimetype':
+                and (val == ITEMS or not isSyntheticKey(val)) \
+                and val.lower() != MIMETYPE.lower():
                 result.add(val)
 
     for a in descriptions or ():
