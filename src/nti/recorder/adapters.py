@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 import time
 
+from ZODB.interfaces import IConnection
+
 from zope import component
 from zope import interface
 
@@ -24,8 +26,6 @@ from zope.container.contained import Contained
 from zope.location.interfaces import ISublocations
 
 from zope.location.location import locate
-
-from ZODB.interfaces import IConnection
 
 from nti.recorder.interfaces import TRX_RECORD_HISTORY_KEY
 
