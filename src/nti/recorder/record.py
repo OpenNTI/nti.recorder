@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 from functools import total_ordering
 
+from persistent import Persistent
+
 from zope import interface
 
 from zope.cachedescriptors.property import readproperty
@@ -19,8 +21,6 @@ from zope.container.contained import Contained
 from zope.deprecation import deprecated
 
 from zope.mimetype.interfaces import IContentTypeAware
-
-from persistent import Persistent
 
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 

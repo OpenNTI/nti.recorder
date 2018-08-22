@@ -11,6 +11,7 @@ from __future__ import absolute_import
 import six
 import zlib
 from io import BytesIO
+
 from six.moves import cPickle as pickle
 
 import transaction
