@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import BTrees
+
 from zope import component
 from zope import interface
 
@@ -18,8 +20,6 @@ from zope.intid.interfaces import IIntIds
 from zope.location import locate
 
 from zope.mimetype.interfaces import IContentTypeAware
-
-import BTrees
 
 from nti.recorder.interfaces import IRecordable
 from nti.recorder.interfaces import ITransactionRecord
@@ -132,7 +132,7 @@ class TypeIndex(AttributeValueIndex):
     default_interface = ITransactionRecord
 
 
-class AttributeSetIndex(RawAttributeSetIndex):
+class AttributeSetIndex(RawAttributeSetIndex):  # pylint: disable=inconsistent-mro
     default_field_name = 'attributes'
     default_interface = ITransactionRecord
 
