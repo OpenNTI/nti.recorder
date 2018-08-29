@@ -79,16 +79,20 @@ class TransactionRecordContainer(BTreeContainer):
         return self.__parent__
     recordable = object
 
-    def _do_add(self, record):
-        key = record.key
-        self._setitemf(key, record)
-        locate(record, parent=self, name=key)
+    def _connect(self, record):
         if IConnection(record, None) is None:
             try:
                 # pylint: disable=too-many-function-args
                 IConnection(self.object).add(record)
             except (TypeError, AttributeError):
                 pass
+
+    def _do_add(self, record):
+        key = record.key
+        self._setitemf(key, record)
+        locate(record, parent=self, name=key)
+        # add to connection
+        self._connect(record)
         lifecycleevent.added(record, self, key)
         # pylint: disable=attribute-defined-outside-init
         self._p_changed = True
