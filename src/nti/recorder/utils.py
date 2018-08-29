@@ -8,10 +8,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import six
 import zlib
 from io import BytesIO
 
+import six
 from six.moves import cPickle as pickle
 
 import transaction
@@ -21,6 +21,8 @@ except ImportError:  # pragma: no cover
     def get_thread_ident():
         return id(transaction.get())
 
+from ZODB.utils import serial_repr
+
 from zope import lifecycleevent
 
 from zope.security.interfaces import NoInteraction
@@ -28,8 +30,6 @@ from zope.security.interfaces import NoInteraction
 from zope.security.management import getInteraction
 
 from zope.security.management import system_user
-
-from ZODB.utils import serial_repr
 
 from nti.externalization.externalization import isSyntheticKey
 
