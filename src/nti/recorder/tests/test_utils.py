@@ -21,7 +21,7 @@ from zope import interface
 
 from zope.annotation.interfaces import IAttributeAnnotatable
 
-from persistent.persistence import Persistent
+from persistent import Persistent
 
 from nti.externalization.persistence import NoPickle
 
@@ -108,7 +108,7 @@ class TestSubscriber(unittest.TestCase):
 
         assert_that(is_created(other), is_(False))
         assert_that(is_created(None), is_(False))
-        
+
         class Fake(object):
             locked = False
         fake = Fake()

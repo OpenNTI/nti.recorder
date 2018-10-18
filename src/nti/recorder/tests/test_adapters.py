@@ -26,7 +26,7 @@ from zope import interface
 
 from zope.annotation.interfaces import IAttributeAnnotatable
 
-from persistent.persistence import Persistent
+from persistent import Persistent
 
 from nti.recorder.adapters import NoOpTransactionRecordContainer
 
@@ -87,19 +87,19 @@ class TestAdapters(unittest.TestCase):
         r = history.clear(False)
         assert_that(r, is_(1))
         assert_that(history, has_length(0))
-        
+
         append_records(f, record)
         assert_that(history, has_length(1))
-        
+
     def test_manager(self):
         f = Recordable()
         manager = ITransactionManager(f, None)
         assert_that(manager,
                     validly_provides(ITransactionManager))
-        
+
         assert_that(manager,
                     verifiably_provides(ITransactionManager))
- 
+
     def test_funcs(self):
         f = Recordable()
         assert_that(has_transactions(f), is_(False))
@@ -151,18 +151,18 @@ class TestAdapters(unittest.TestCase):
         parent = object()
         record = Recordable()
         container = NoOpTransactionRecordContainer()
-        
+
         container.__parent__ = parent
         assert_that(container, has_property('object', is_(parent)))
-        
+
         container.add(record)
         container.extend((record,))
         assert_that(container, has_length(0))
-        
+
         container.remove(record)
         assert_that(container, has_length(0))
         container.clear()
-        
+
         assert_that(container, has_length(0))
         assert_that(container.records(), is_(()))
         assert_that(container.query(), is_(()))
